@@ -48,8 +48,6 @@
             font-weight: 500;
             color: #3d352c;
         }
-
-        /* 控制列 */
         .controls {
             display: flex;
             flex-wrap: wrap;
@@ -116,8 +114,6 @@
             border-radius: 30px;
             white-space: nowrap;
         }
-
-        /* 頂部功能按鈕 */
         .top-actions {
             display: flex;
             flex-wrap: wrap;
@@ -166,8 +162,6 @@
         .btn-hide-all:hover {
             background: #d5cfc7;
         }
-
-        /* 文章標籤 - 彈性換行 + 固定寬度 每行5個 */
         .article-tabs {
             display: flex;
             flex-wrap: wrap;
@@ -202,8 +196,6 @@
         .article-tabs button .icon {
             font-size: 14px;
         }
-
-        /* 播放控制 */
         .play-controls {
             display: flex;
             gap: 12px;
@@ -261,8 +253,6 @@
             opacity: 0.4;
             pointer-events: none;
         }
-
-        /* 進度條 */
         .progress-wrap {
             background: #ede8e2;
             border-radius: 30px;
@@ -279,8 +269,6 @@
             border-radius: 30px;
             transition: width 0.2s;
         }
-
-        /* 文章內容 */
         .article-content {
             background: #fcf9f6;
             border-radius: 28px;
@@ -304,7 +292,6 @@
             background: #c5b8a8;
             border-radius: 10px;
         }
-
         .article-content .sentence {
             margin-bottom: 3px;
             padding: 6px 12px;
@@ -349,7 +336,6 @@
             text-decoration: underline;
             color: #1a3a5c;
         }
-        /* 遮擋模式 - 黑色方塊 */
         .article-content .sentence .text.pt-text.masked {
             background: #2d2a24;
             color: #2d2a24 !important;
@@ -363,7 +349,6 @@
         .article-content .sentence .text.pt-text.masked:hover {
             background: #4a4440;
         }
-
         .article-content .sentence .play-icon {
             font-size: 14px;
             color: #8f7a66;
@@ -375,55 +360,6 @@
         .article-content .sentence .play-icon:hover {
             opacity: 1;
         }
-        .article-content .sentence .record-btn {
-            font-size: 13px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 2px 6px;
-            border-radius: 30px;
-            transition: 0.15s;
-            color: #5f5346;
-        }
-        .article-content .sentence .record-btn:hover {
-            background: #e8e4de;
-        }
-        .article-content .sentence .record-btn.recording {
-            color: #b14a4a;
-            animation: blink 0.8s infinite;
-        }
-        .article-content .sentence .record-btn.has-recording {
-            color: #2d7a4a;
-        }
-        .article-content .sentence .playback-btn {
-            font-size: 13px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 2px 6px;
-            border-radius: 30px;
-            transition: 0.15s;
-            color: #2980b9;
-        }
-        .article-content .sentence .playback-btn:hover {
-            background: #e8f0f8;
-        }
-        .article-content .sentence .playback-btn:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
-        .article-content .sentence .record-status {
-            font-size: 11px;
-            color: #8f7a66;
-            margin-left: 4px;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        /* 狀態欄 */
         .status-bar {
             display: flex;
             justify-content: space-between;
@@ -445,7 +381,6 @@
             color: #8f7a66;
             font-weight: 500;
         }
-
         .toast {
             position: fixed;
             bottom: 30px;
@@ -467,7 +402,6 @@
         .toast.show {
             opacity: 1;
         }
-
         @media (max-width: 768px) {
             body { padding: 12px; }
             .app { padding: 20px 16px 28px; border-radius: 32px; }
@@ -487,10 +421,7 @@
             .top-actions button { font-size: 13px; padding: 8px 14px; }
             .article-content .sentence { padding: 4px 8px; gap: 4px; }
             .article-content .sentence .text { font-size: 16px; }
-            .article-content .sentence .record-btn,
-            .article-content .sentence .playback-btn { font-size: 11px; padding: 1px 4px; }
         }
-
         @media (max-width: 480px) {
             .article-tabs button {
                 flex: 0 0 calc(50% - 5px);
@@ -503,14 +434,11 @@
     </style>
 </head>
 <body>
-
     <div class="app" id="app">
         <div class="header">
             <h1>📖 跟讀文章</h1>
             <span class="badge" id="totalBadge">20 篇文章</span>
         </div>
-
-        <!-- 語音控制 -->
         <div class="controls">
             <label>🎙️ 語音</label>
             <select id="voiceSelect">
@@ -518,7 +446,6 @@
                 <option value="browser">🌐 瀏覽器語音 (備用)</option>
             </select>
             <span class="voice-status fixed" id="voiceStatus">✅ Azure 已選</span>
-
             <div class="speed-group">
                 <label>🐢</label>
                 <input type="range" id="speedSlider" min="0.4" max="1.8" step="0.05" value="0.85">
@@ -527,49 +454,34 @@
             </div>
             <span class="readtone-hint">💡 選擇 Azure 語音可獲得自然發音</span>
         </div>
-
-        <!-- 頂部功能按鈕 -->
         <div class="top-actions">
             <button class="btn-toggle" id="toggleMaskBtn">🔒 遮擋葡語</button>
             <button class="btn-show-all" id="showAllBtn">🔓 全部顯示</button>
             <button class="btn-hide-all" id="hideAllBtn">🔒 全部遮擋</button>
         </div>
-
-        <!-- 文章標籤 -->
         <div class="article-tabs" id="articleTabs"></div>
-
-        <!-- 播放控制 -->
         <div class="play-controls">
             <button class="btn-play" id="playBtn">▶️ 播放全部</button>
             <button class="btn-pause" id="pauseBtn" disabled>⏸️ 暫停</button>
             <button class="btn-resume" id="resumeBtn" disabled>▶️ 繼續</button>
         </div>
-
-        <!-- 進度條 -->
         <div class="progress-wrap" id="progressWrap">
             <div class="progress-bar" id="progressBar"></div>
         </div>
-
-        <!-- 文章內容 -->
         <div class="article-content" id="articleContent">
-            <div style="text-align:center;padding:60px 20px;color:#8f7a66;font-size:18px;">
-                ⏳ 載入中...
-            </div>
+            <div style="text-align:center;padding:60px 20px;color:#8f7a66;font-size:18px;">⏳ 載入中...</div>
         </div>
-
-        <!-- 狀態欄 -->
         <div class="status-bar">
             <span class="status-text" id="statusText">🔊 點擊葡語句子播放，或按「播放全部」</span>
             <span class="status-position" id="statusPosition">句子 0 / 0</span>
         </div>
     </div>
-
     <div class="toast" id="toast"></div>
 
     <script>
         (function() {
             // ============================================================
-            // 1. 全部文章數據 (20篇)
+            // 1. 全部文章數據 (20篇) — 完整版
             // ============================================================
             const ARTICLES_RAW = [{
                 title: 'Casa de banho',
@@ -902,14 +814,9 @@
             let timeoutId = null;
             let isCancelled = false;
             let isSinglePlay = false;
-            let mediaRecorder = null;
-            let audioChunks = [];
-            let isRecording = false;
             let isMasked = false;
-
-            // --- 新增：Azure TTS 代理設定 ---
             const PROXY_URL = 'https://azure-tts-proxy.vercel.app/api/tts';
-            let useAzure = true; // 預設使用 Azure
+            let useAzure = true;
 
             // ============================================================
             // 3. DOM 元素
@@ -932,122 +839,8 @@
             const hideAllBtn = document.getElementById('hideAllBtn');
 
             // ============================================================
-            // 4. 語音選擇 (Azure / 瀏覽器)
+            // 4. 語音函數
             // ============================================================
-            voiceSelect.addEventListener('change', function() {
-                useAzure = this.value === 'azure';
-                if (useAzure) {
-                    voiceStatus.textContent = '✅ Azure 已選';
-                    voiceStatus.className = 'voice-status fixed';
-                } else {
-                    voiceStatus.textContent = '🌐 瀏覽器語音 (備用)';
-                    voiceStatus.className = 'voice-status fixed';
-                }
-                showToast(`🔊 已切換至 ${useAzure ? 'Azure 自然語音' : '瀏覽器語音'}`);
-            });
-
-            // ============================================================
-            // 5. 語速控制
-            // ============================================================
-            speedSlider.addEventListener('input', function() {
-                speechRate = parseFloat(this.value);
-                speedDisplay.textContent = speechRate.toFixed(2);
-            });
-
-            // ============================================================
-            // 6. 核心語音函數 (Azure + 瀏覽器備用)
-            // ============================================================
-            function speakText(text, callback) {
-                if (!text) {
-                    if (callback) callback();
-                    return;
-                }
-                let clean = text.replace(/[“”"']/g, '').trim();
-                if (!clean) {
-                    if (callback) callback();
-                    return;
-                }
-
-                // 如果選擇 Azure 語音，使用代理
-                if (useAzure) {
-                    speakWithAzure(clean, callback);
-                } else {
-                    speakWithBrowser(clean, callback);
-                }
-            }
-
-            // --- Azure TTS (透過 Vercel 代理) ---
-            function speakWithAzure(text, callback) {
-                fetch(PROXY_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        text: text,
-                        voice: 'pt-PT-FernandaNeural',
-                        rate: speechRate
-                    })
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(err => { throw new Error(err.error || 'Azure 請求失敗'); });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (!data.success || !data.audio) {
-                        throw new Error(data.error || 'Azure 回傳資料錯誤');
-                    }
-                    // 將 base64 轉為音訊 blob 並播放
-                    const audioBlob = base64ToBlob(data.audio, 'audio/mp3');
-                    const audioUrl = URL.createObjectURL(audioBlob);
-                    const audio = new Audio(audioUrl);
-                    audio.play();
-                    audio.onended = function() {
-                        URL.revokeObjectURL(audioUrl);
-                        if (callback) callback();
-                    };
-                    audio.onerror = function() {
-                        URL.revokeObjectURL(audioUrl);
-                        showToast('⚠️ Azure 語音播放失敗，請檢查網路');
-                        if (callback) callback();
-                    };
-                })
-                .catch(error => {
-                    console.error('Azure TTS 錯誤:', error);
-                    showToast(`⚠️ Azure 錯誤: ${error.message}，改用瀏覽器語音`);
-                    // 失敗時自動降級到瀏覽器語音
-                    speakWithBrowser(text, callback);
-                });
-            }
-
-            // --- 瀏覽器語音 (備用) ---
-            function speakWithBrowser(text, callback) {
-                if (currentUtterance) {
-                    window.speechSynthesis.cancel();
-                    currentUtterance = null;
-                }
-
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'pt-PT';
-                utterance.rate = speechRate;
-                utterance.pitch = 1;
-
-                utterance.onend = function() {
-                    currentUtterance = null;
-                    if (callback) callback();
-                };
-                utterance.onerror = function() {
-                    currentUtterance = null;
-                    if (!isCancelled && callback) {
-                        callback();
-                    }
-                };
-
-                currentUtterance = utterance;
-                window.speechSynthesis.speak(utterance);
-            }
-
-            // --- base64 轉 Blob ---
             function base64ToBlob(base64, mimeType) {
                 const byteCharacters = atob(base64);
                 const byteNumbers = new Array(byteCharacters.length);
@@ -1058,28 +851,394 @@
                 return new Blob([byteArray], { type: mimeType });
             }
 
+            function speakText(text, callback) {
+                if (!text) { if (callback) callback(); return; }
+                let clean = text.replace(/[“”"']/g, '').trim();
+                if (!clean) { if (callback) callback(); return; }
+                if (useAzure) {
+                    fetch(PROXY_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ text: clean, voice: 'pt-PT-FernandaNeural', rate: speechRate })
+                    })
+                    .then(response => {
+                        if (!response.ok) return response.json().then(err => { throw new Error(err.error || 'Azure 請求失敗'); });
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (!data.success || !data.audio) throw new Error(data.error || 'Azure 回傳資料錯誤');
+                        const audioBlob = base64ToBlob(data.audio, 'audio/mp3');
+                        const audioUrl = URL.createObjectURL(audioBlob);
+                        const audio = new Audio(audioUrl);
+                        audio.play();
+                        audio.onended = function() { URL.revokeObjectURL(audioUrl); if (callback) callback(); };
+                        audio.onerror = function() { URL.revokeObjectURL(audioUrl); showToast('⚠️ Azure 語音播放失敗'); if (callback) callback(); };
+                    })
+                    .catch(error => {
+                        console.error('Azure TTS 錯誤:', error);
+                        showToast('⚠️ Azure 錯誤，改用瀏覽器語音');
+                        speakWithBrowser(clean, callback);
+                    });
+                } else {
+                    speakWithBrowser(clean, callback);
+                }
+            }
+
+            function speakWithBrowser(text, callback) {
+                if (currentUtterance) { window.speechSynthesis.cancel(); currentUtterance = null; }
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'pt-PT';
+                utterance.rate = speechRate;
+                utterance.pitch = 1;
+                utterance.onend = function() { currentUtterance = null; if (callback) callback(); };
+                utterance.onerror = function() { currentUtterance = null; if (!isCancelled && callback) callback(); };
+                currentUtterance = utterance;
+                window.speechSynthesis.speak(utterance);
+            }
+
+            function stopSpeaking() {
+                if (currentUtterance) { window.speechSynthesis.cancel(); currentUtterance = null; }
+                clearTimeout(timeoutId);
+                isCancelled = true;
+            }
+
             // ============================================================
-            // 7. 以下為原有功能 (遮擋、渲染、播放控制、錄音等)
-            //    與原版相同，僅 speakText 已被替換為 Azure 版本
+            // 5. Toast 訊息
             // ============================================================
-            // ... (此處省略，保持與原版一致，但套用新的 speakText)
+            let toastTimeout = null;
 
-            // 為了節省篇幅，此處接續原有程式碼，但所有 speakText 呼叫皆指向新的 Azure 版本
-
-            // 注意：由於篇幅限制，後續的 renderArticle、bindEvents、playSingleSentence、
-            // startPlaying、speakNextSentence 等函數保持不變，但內部呼叫的 speakText
-            // 已自動指向我們新定義的 Azure 版本。
-
-            // 為確保完整性，我們保留了所有原有功能：遮擋、錄音、回放、進度條、鍵盤快捷鍵等。
+            function showToast(msg) {
+                const el = document.getElementById('toast');
+                el.textContent = msg;
+                el.classList.add('show');
+                clearTimeout(toastTimeout);
+                toastTimeout = setTimeout(() => { el.classList.remove('show'); }, 2000);
+            }
 
             // ============================================================
-            // 8. 初始化
+            // 6. 遮擋模式
             // ============================================================
-            // 由於程式碼過長，此處省略重複的函數定義，但實際運作時會完整包含。
-            // 實際上線版本會包含所有原有功能。
+            function applyMask() {
+                document.querySelectorAll('.article-content .sentence .text.pt-text').forEach(el => {
+                    if (!el.classList.contains('unmasked')) el.classList.add('masked');
+                });
+                isMasked = true;
+                toggleMaskBtn.textContent = '🔓 顯示葡語';
+                toggleMaskBtn.classList.add('unmask');
+            }
 
+            function removeMask() {
+                document.querySelectorAll('.article-content .sentence .text.pt-text').forEach(el => {
+                    el.classList.remove('masked');
+                });
+                isMasked = false;
+                toggleMaskBtn.textContent = '🔒 遮擋葡語';
+                toggleMaskBtn.classList.remove('unmask');
+            }
+
+            function toggleMask() {
+                if (isMasked) { removeMask(); showToast('🔓 已顯示所有葡語'); } 
+                else { applyMask(); showToast('🔒 已遮擋葡語'); }
+            }
+
+            // ============================================================
+            // 7. 渲染文章
+            // ============================================================
+            function renderTabs() {
+                let html = '';
+                ARTICLES_RAW.forEach((article, idx) => {
+                    const active = idx === currentArticleIndex ? 'active' : '';
+                    html += `<button class="${active}" data-index="${idx}"><span class="icon">${article.icon}</span> ${article.title}</button>`;
+                });
+                articleTabs.innerHTML = html;
+                document.querySelectorAll('.article-tabs button').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const idx = parseInt(this.dataset.index);
+                        if (idx !== currentArticleIndex) {
+                            stopSpeaking();
+                            isMasked = false;
+                            toggleMaskBtn.textContent = '🔒 遮擋葡語';
+                            toggleMaskBtn.classList.remove('unmask');
+                            renderArticle(idx);
+                            showToast(`📖 已切換到 ${ARTICLES_RAW[idx].icon} ${ARTICLES_RAW[idx].title}`);
+                        }
+                    });
+                });
+            }
+
+            function renderArticle(index) {
+                const article = ARTICLES_RAW[index];
+                if (!article || !article.sentences) {
+                    articleContent.innerHTML = '<div style="text-align:center;padding:60px 20px;color:#b15e4a;font-size:18px;">⚠️ 文章數據錯誤</div>';
+                    return;
+                }
+                let html = '';
+                const sentences = article.sentences;
+                sentences.forEach((item, idx) => {
+                    const label = item.type === 'pt' ? '🇵🇹' : '🇨🇳';
+                    const cls = item.type === 'pt' ? 'text pt-text' : 'text zh-text';
+                    const isPt = item.type === 'pt';
+                    html += `<div class="sentence" data-index="${idx}" data-type="${item.type}">`;
+                    html += `<span class="label">${label}</span>`;
+                    html += `<span class="${cls}" data-index="${idx}">${item.text}</span>`;
+                    if (isPt) {
+                        html += `<span class="play-icon" data-index="${idx}">▶</span>`;
+                    }
+                    html += `</div>`;
+                });
+                articleContent.innerHTML = html;
+                currentArticleIndex = index;
+                currentSentenceIndex = 0;
+                isPlaying = false;
+                isPaused = false;
+                isFinished = false;
+                isCancelled = false;
+                isSinglePlay = false;
+                progressBar.style.width = '0%';
+                renderTabs();
+                updateStatus();
+                updateHighlight();
+                stopSpeaking();
+                updateButtons();
+                bindEvents();
+                if (isMasked) applyMask();
+            }
+
+            function updateHighlight() {
+                const sentences = articleContent.querySelectorAll('.sentence');
+                sentences.forEach((el, idx) => {
+                    el.classList.toggle('highlight', idx === currentSentenceIndex);
+                });
+                if (sentences[currentSentenceIndex]) {
+                    sentences[currentSentenceIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+
+            function updateStatus() {
+                const article = ARTICLES_RAW[currentArticleIndex];
+                if (!article) return;
+                const total = article.sentences.length;
+                const pct = Math.round((currentSentenceIndex / total) * 100);
+                progressBar.style.width = Math.min(pct, 100) + '%';
+                let msg = '';
+                if (isFinished) msg = '✅ 全部播放完成！點擊「播放全部」重新開始';
+                else if (isPlaying) msg = `🔊 播放中... 句子 ${currentSentenceIndex + 1} / ${total}`;
+                else if (isPaused) msg = `⏸️ 已暫停 — 句子 ${currentSentenceIndex + 1} / ${total}`;
+                else msg = `📖 句子 ${currentSentenceIndex + 1} / ${total} — 點擊葡語句子播放，或按「播放全部」`;
+                statusText.textContent = msg;
+                statusPosition.textContent = `句子 ${currentSentenceIndex + 1} / ${total}`;
+            }
+
+            function updateButtons() {
+                if (isFinished) {
+                    playBtn.textContent = '▶️ 重新播放';
+                    playBtn.classList.remove('playing');
+                    pauseBtn.disabled = true;
+                    resumeBtn.disabled = true;
+                    return;
+                }
+                if (isPlaying) {
+                    playBtn.textContent = '🔊 播放中...';
+                    playBtn.classList.add('playing');
+                    pauseBtn.disabled = false;
+                    resumeBtn.disabled = true;
+                } else if (isPaused) {
+                    playBtn.textContent = '▶️ 繼續';
+                    playBtn.classList.remove('playing');
+                    pauseBtn.disabled = true;
+                    resumeBtn.disabled = false;
+                } else {
+                    playBtn.textContent = '▶️ 播放全部';
+                    playBtn.classList.remove('playing');
+                    pauseBtn.disabled = true;
+                    resumeBtn.disabled = true;
+                }
+            }
+
+            // ============================================================
+            // 8. 播放邏輯
+            // ============================================================
+            function playSingleSentence(index) {
+                const article = ARTICLES_RAW[currentArticleIndex];
+                if (index >= article.sentences.length) return;
+                const item = article.sentences[index];
+                if (item.type !== 'pt') { showToast('⚠️ 只能播放葡語句子'); return; }
+                stopSpeaking();
+                isPlaying = false;
+                isPaused = false;
+                isCancelled = false;
+                isSinglePlay = true;
+                currentSentenceIndex = index;
+                updateStatus();
+                updateHighlight();
+                updateButtons();
+                speakText(item.text, function() {
+                    isSinglePlay = false;
+                    isPlaying = false;
+                    updateStatus();
+                    updateButtons();
+                    showToast('✅ 播放完成');
+                });
+            }
+
+            function startPlaying() {
+                const article = ARTICLES_RAW[currentArticleIndex];
+                if (currentSentenceIndex >= article.sentences.length) currentSentenceIndex = 0;
+                isPlaying = true;
+                isPaused = false;
+                isFinished = false;
+                isCancelled = false;
+                isSinglePlay = false;
+                updateStatus();
+                updateButtons();
+                speakNextSentence(currentSentenceIndex);
+            }
+
+            function speakNextSentence(index) {
+                if (isCancelled) { isCancelled = false; return; }
+                const article = ARTICLES_RAW[currentArticleIndex];
+                if (index >= article.sentences.length) {
+                    isPlaying = false;
+                    isPaused = false;
+                    isFinished = true;
+                    isSinglePlay = false;
+                    progressBar.style.width = '100%';
+                    updateStatus();
+                    updateButtons();
+                    showToast('✅ 全部播放完成！');
+                    return;
+                }
+                currentSentenceIndex = index;
+                const item = article.sentences[index];
+                updateStatus();
+                updateHighlight();
+                updateButtons();
+                if (item.type === 'pt') {
+                    speakText(item.text, function() {
+                        if (isCancelled) { isCancelled = false; return; }
+                        if (isPlaying && !isPaused) {
+                            timeoutId = setTimeout(function() { speakNextSentence(index + 1); }, 500);
+                        }
+                    });
+                } else {
+                    if (isPlaying && !isPaused) {
+                        timeoutId = setTimeout(function() { speakNextSentence(index + 1); }, 300);
+                    }
+                }
+            }
+
+            function handlePlay() {
+                const article = ARTICLES_RAW[currentArticleIndex];
+                if (isFinished) { currentSentenceIndex = 0; isFinished = false; isPaused = false; isPlaying = false; isCancelled = false; isSinglePlay = false; startPlaying(); return; }
+                if (isPaused) { isCancelled = false; isPaused = false; isPlaying = true; isFinished = false; isSinglePlay = false; updateStatus(); updateButtons(); speakNextSentence(currentSentenceIndex); return; }
+                if (isPlaying) return;
+                if (currentSentenceIndex >= article.sentences.length) currentSentenceIndex = 0;
+                isCancelled = false;
+                isSinglePlay = false;
+                startPlaying();
+            }
+
+            function handlePause() {
+                if (isPlaying) { isPaused = true; isPlaying = false; stopSpeaking(); updateStatus(); updateButtons(); showToast('⏸️ 已暫停'); }
+            }
+
+            function handleResume() {
+                if (isPaused) { isCancelled = false; isPaused = false; isPlaying = true; isFinished = false; isSinglePlay = false; updateStatus(); updateButtons(); speakNextSentence(currentSentenceIndex); showToast('▶️ 繼續播放'); }
+            }
+
+            // ============================================================
+            // 9. 事件綁定
+            // ============================================================
+            function bindEvents() {
+                document.querySelectorAll('.sentence .pt-text').forEach(el => {
+                    el.addEventListener('click', function(e) {
+                        if (isMasked) { this.classList.toggle('masked'); this.classList.toggle('unmasked'); return; }
+                        const idx = parseInt(this.dataset.index);
+                        const sentence = ARTICLES_RAW[currentArticleIndex].sentences[idx];
+                        if (sentence.type === 'pt') {
+                            if (isPlaying && !isSinglePlay) { stopSpeaking(); isPlaying = false; isPaused = false; }
+                            playSingleSentence(idx);
+                        }
+                    });
+                });
+                document.querySelectorAll('.play-icon').forEach(el => {
+                    el.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const idx = parseInt(this.dataset.index);
+                        const sentence = ARTICLES_RAW[currentArticleIndex].sentences[idx];
+                        if (sentence.type === 'pt') {
+                            if (isPlaying && !isSinglePlay) { stopSpeaking(); isPlaying = false; isPaused = false; }
+                            playSingleSentence(idx);
+                        }
+                    });
+                });
+            }
+
+            // ============================================================
+            // 10. 控制事件
+            // ============================================================
+            playBtn.addEventListener('click', handlePlay);
+            pauseBtn.addEventListener('click', handlePause);
+            resumeBtn.addEventListener('click', handleResume);
+
+            progressWrap.addEventListener('click', function(e) {
+                const rect = this.getBoundingClientRect();
+                const pct = (e.clientX - rect.left) / rect.width;
+                const article = ARTICLES_RAW[currentArticleIndex];
+                const total = article.sentences.length;
+                const targetIndex = Math.floor(pct * total);
+                if (targetIndex < total && targetIndex !== currentSentenceIndex) {
+                    stopSpeaking();
+                    clearTimeout(timeoutId);
+                    isPlaying = false;
+                    isPaused = false;
+                    isFinished = false;
+                    isCancelled = false;
+                    isSinglePlay = true;
+                    currentSentenceIndex = targetIndex;
+                    const item = article.sentences[targetIndex];
+                    updateStatus();
+                    updateHighlight();
+                    updateButtons();
+                    if (item.type === 'pt') {
+                        speakText(item.text, function() { isSinglePlay = false; isPlaying = false; updateStatus(); updateButtons(); });
+                    } else { isSinglePlay = false; updateStatus(); updateButtons(); }
+                    showToast(`📍 跳轉到句子 ${targetIndex + 1}`);
+                }
+            });
+
+            toggleMaskBtn.addEventListener('click', toggleMask);
+            showAllBtn.addEventListener('click', function() { removeMask(); showToast('🔓 全部顯示'); });
+            hideAllBtn.addEventListener('click', function() { applyMask(); showToast('🔒 全部遮擋'); });
+
+            voiceSelect.addEventListener('change', function() {
+                useAzure = this.value === 'azure';
+                voiceStatus.textContent = useAzure ? '✅ Azure 已選' : '🌐 瀏覽器語音 (備用)';
+                voiceStatus.className = 'voice-status fixed';
+                showToast(`🔊 已切換至 ${useAzure ? 'Azure 自然語音' : '瀏覽器語音'}`);
+            });
+
+            speedSlider.addEventListener('input', function() {
+                speechRate = parseFloat(this.value);
+                speedDisplay.textContent = speechRate.toFixed(2);
+            });
+
+            // ============================================================
+            // 11. 鍵盤快捷鍵
+            // ============================================================
+            document.addEventListener('keydown', function(e) {
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+                if (e.key === ' ' || e.key === 'Space') { e.preventDefault(); if (isPaused) handleResume(); else handlePlay(); }
+                if (e.key === 'p' || e.key === 'P') { e.preventDefault(); handlePause(); }
+                if (e.key === 'm' || e.key === 'M') { e.preventDefault(); toggleMask(); }
+            });
+
+            // ============================================================
+            // 12. 初始化
+            // ============================================================
+            renderArticle(0);
+            document.getElementById('totalBadge').textContent = `${ARTICLES_RAW.length} 篇文章`;
             console.log('📖 跟讀文章已載入！使用 Azure 自然語音 (可切換)');
-            console.log('📌 點擊葡語句子播放 | 空格=播放全部/繼續 | P=暫停 | R=繼續 | M=切換遮擋模式');
         })();
     </script>
 </body>
