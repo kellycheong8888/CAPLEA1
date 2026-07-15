@@ -1,4 +1,4 @@
-// api/tts.js — Azure TTS + OpenAI + STT 代理 (完整版 + CORS 修復)
+// api/tts.js — Azure TTS + OpenAI + STT 代理 (完整版)
 export default async function handler(req, res) {
     // ============================================================
     // 1. CORS 預檢請求 (OPTIONS)
@@ -36,7 +36,7 @@ export default async function handler(req, res) {
     // ============================================================
     // 4. 解析請求
     // ============================================================
-    const { action, text, voice, rate, level, imageBase64, sttAudio, prompt, systemPrompt } = req.body;
+    const { action, text, voice, rate, sttAudio, prompt, systemPrompt } = req.body;
 
     // 讀取環境變數
     const subscriptionKey = process.env.AZURE_KEY;
@@ -71,7 +71,6 @@ export default async function handler(req, res) {
         }
 
         try {
-            // 獲取 Token
             const tokenResponse = await fetch(
                 `https://${region}.api.cognitive.microsoft.com/sts/v1.0/issuetoken`,
                 {
@@ -173,7 +172,7 @@ export default async function handler(req, res) {
                     },
                     body: JSON.stringify({
                         messages: messages,
-                        temperature: 0.7,
+                        temperature: 1,  // ← 改成 1 (模型要求)
                         max_completion_tokens: 1000
                     })
                 }
@@ -216,7 +215,6 @@ export default async function handler(req, res) {
         }
 
         try {
-            // 將 base64 轉為 Buffer
             const audioBuffer = Buffer.from(sttAudio, 'base64');
 
             const sttResponse = await fetch(
