@@ -360,6 +360,53 @@
         .article-content .sentence .play-icon:hover {
             opacity: 1;
         }
+        /* ★★★ 錄音按鈕樣式 ★★★ */
+        .article-content .sentence .record-btn {
+            font-size: 13px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 30px;
+            transition: 0.15s;
+            color: #5f5346;
+        }
+        .article-content .sentence .record-btn:hover {
+            background: #e8e4de;
+        }
+        .article-content .sentence .record-btn.recording {
+            color: #b14a4a;
+            animation: blink 0.8s infinite;
+        }
+        .article-content .sentence .record-btn.has-recording {
+            color: #2d7a4a;
+        }
+        .article-content .sentence .playback-btn {
+            font-size: 13px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 30px;
+            transition: 0.15s;
+            color: #2980b9;
+        }
+        .article-content .sentence .playback-btn:hover {
+            background: #e8f0f8;
+        }
+        .article-content .sentence .playback-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .article-content .sentence .record-status {
+            font-size: 11px;
+            color: #8f7a66;
+            margin-left: 4px;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
         .status-bar {
             display: flex;
             justify-content: space-between;
@@ -823,6 +870,11 @@
             let useAzure = true;
             let currentAzureVoice = 'pt-PT-FernandaNeural';
 
+            // 錄音相關變數
+            let mediaRecorder = null;
+            let audioChunks = [];
+            let isRecording = false;
+
             // ============================================================
             // 3. DOM 元素
             // ============================================================
@@ -867,7 +919,6 @@
                 }
             }
 
-            // --- Azure TTS (透過 Vercel 代理) ---
             function speakWithAzure(text, callback) {
                 fetch(PROXY_URL, {
                     method: 'POST',
@@ -900,7 +951,6 @@
                 });
             }
 
-            // --- 瀏覽器語音 (備用) ---
             function speakWithBrowser(text, callback) {
                 if (currentUtterance) { window.speechSynthesis.cancel(); currentUtterance = null; }
                 const utterance = new SpeechSynthesisUtterance(text);
@@ -995,11 +1045,19 @@
                     const label = item.type === 'pt' ? '🇵🇹' : '🇨🇳';
                     const cls = item.type === 'pt' ? 'text pt-text' : 'text zh-text';
                     const isPt = item.type === 'pt';
+                    const key = `rec_${index}_${idx}`;
+                    const hasRecording = localStorage.getItem(key) !== null;
+
                     html += `<div class="sentence" data-index="${idx}" data-type="${item.type}">`;
                     html += `<span class="label">${label}</span>`;
                     html += `<span class="${cls}" data-index="${idx}">${item.text}</span>`;
                     if (isPt) {
                         html += `<span class="play-icon" data-index="${idx}">▶</span>`;
+                        html += `<button class="record-btn" data-key="${key}" data-index="${idx}" title="錄音">🎙</button>`;
+                        html += `<button class="playback-btn" data-key="${key}" data-index="${idx}" title="回放錄音" ${!hasRecording ? 'disabled' : ''}>🔊</button>`;
+                        if (hasRecording) {
+                            html += `<span class="record-status">✅</span>`;
+                        }
                     }
                     html += `</div>`;
                 });
@@ -1178,6 +1236,7 @@
                         }
                     });
                 });
+
                 document.querySelectorAll('.play-icon').forEach(el => {
                     el.addEventListener('click', function(e) {
                         e.stopPropagation();
@@ -1189,10 +1248,116 @@
                         }
                     });
                 });
+
+                // ★★★ 錄音按鈕 ★★★
+                document.querySelectorAll('.record-btn').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const key = this.dataset.key;
+                        const idx = parseInt(this.dataset.index);
+                        toggleRecording(this, key, idx);
+                    });
+                });
+
+                // ★★★ 回放按鈕 ★★★
+                document.querySelectorAll('.playback-btn').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const key = this.dataset.key;
+                        playRecording(key);
+                    });
+                });
             }
 
             // ============================================================
-            // 10. 控制事件
+            // 10. 錄音功能
+            // ============================================================
+            function toggleRecording(btn, key, index) {
+                if (isRecording) {
+                    if (mediaRecorder) {
+                        mediaRecorder.stop();
+                        isRecording = false;
+                        btn.textContent = '🎙';
+                        btn.classList.remove('recording');
+                        showToast('⏹️ 錄音已停止');
+                    }
+                    return;
+                }
+
+                navigator.mediaDevices.getUserMedia({ audio: true })
+                    .then(stream => {
+                        mediaRecorder = new MediaRecorder(stream);
+                        audioChunks = [];
+
+                        mediaRecorder.ondataavailable = event => {
+                            if (event.data.size > 0) audioChunks.push(event.data);
+                        };
+
+                        mediaRecorder.onstop = function() {
+                            const blob = new Blob(audioChunks, { type: 'audio/webm' });
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                const base64 = e.target.result.split(',')[1];
+                                localStorage.setItem(key, base64);
+                                btn.textContent = '🎙';
+                                btn.classList.remove('recording');
+                                isRecording = false;
+                                const playbackBtn = btn.parentElement.querySelector('.playback-btn');
+                                if (playbackBtn) {
+                                    playbackBtn.disabled = false;
+                                }
+                                const statusSpan = btn.parentElement.querySelector('.record-status');
+                                if (!statusSpan) {
+                                    const span = document.createElement('span');
+                                    span.className = 'record-status';
+                                    span.textContent = '✅';
+                                    btn.parentElement.appendChild(span);
+                                } else {
+                                    statusSpan.textContent = '✅';
+                                }
+                                showToast('✅ 錄音已儲存！');
+                            };
+                            reader.readAsDataURL(blob);
+                            stream.getTracks().forEach(t => t.stop());
+                        };
+
+                        mediaRecorder.start();
+                        isRecording = true;
+                        btn.textContent = '⏹';
+                        btn.classList.add('recording');
+                        showToast('🎙 錄音中... 點擊停止');
+                    })
+                    .catch(err => {
+                        showToast('⚠️ 無法存取麥克風，請允許權限');
+                        console.error(err);
+                    });
+            }
+
+            // ============================================================
+            // 11. 回放錄音
+            // ============================================================
+            function playRecording(key) {
+                const data = localStorage.getItem(key);
+                if (!data) {
+                    showToast('⚠️ 沒有找到錄音');
+                    return;
+                }
+                try {
+                    const blob = base64ToBlob(data, 'audio/webm');
+                    const audio = new Audio(URL.createObjectURL(blob));
+                    audio.play();
+                    showToast('🔊 回放錄音中...');
+                    audio.onended = function() {
+                        showToast('✅ 回放結束');
+                    };
+                } catch (e) {
+                    showToast('⚠️ 無法讀取錄音檔案');
+                    console.error(e);
+                }
+            }
+
+            // ============================================================
+            // 12. 控制事件
             // ============================================================
             playBtn.addEventListener('click', handlePlay);
             pauseBtn.addEventListener('click', handlePause);
@@ -1228,7 +1393,6 @@
             showAllBtn.addEventListener('click', function() { removeMask(); showToast('🔓 全部顯示'); });
             hideAllBtn.addEventListener('click', function() { applyMask(); showToast('🔒 全部遮擋'); });
 
-            // ★★★ 新的語音切換邏輯 ★★★
             voiceSelect.addEventListener('change', function() {
                 const selectedVoice = this.value;
                 if (selectedVoice === 'browser') {
@@ -1251,7 +1415,7 @@
             });
 
             // ============================================================
-            // 11. 鍵盤快捷鍵
+            // 13. 鍵盤快捷鍵
             // ============================================================
             document.addEventListener('keydown', function(e) {
                 if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
@@ -1261,12 +1425,13 @@
             });
 
             // ============================================================
-            // 12. 初始化
+            // 14. 初始化
             // ============================================================
             renderArticle(0);
             document.getElementById('totalBadge').textContent = `${ARTICLES_RAW.length} 篇文章`;
             console.log('📖 跟讀文章已載入！使用 Azure 自然語音 (可切換)');
             console.log('🎙️ 可用語音: Fernanda, Raquel, Duarte, Francisca, Antonio');
+            console.log('📌 點擊 🎙 錄音 | 點擊 🔊 回放錄音');
         })();
     </script>
 </body>
