@@ -1,4 +1,4 @@
-// api/tts.js — Azure TTS + OpenAI + STT 代理 (完整版)
+// api/tts.js — Azure TTS + OpenAI + STT 代理 (最簡化穩定版)
 export default async function handler(req, res) {
     // ============================================================
     // 1. CORS 預檢請求 (OPTIONS)
@@ -18,27 +18,24 @@ export default async function handler(req, res) {
     }
 
     // ============================================================
-    // 3. 驗證密鑰 (保護 Azure 額度)
+    // 3. 驗證密鑰
     // ============================================================
     const secret = req.headers['x-proxy-secret'];
     const expectedSecret = process.env.PROXY_SECRET;
 
     if (!expectedSecret) {
-        console.error('⚠️ 伺服器未設定 PROXY_SECRET 環境變數');
         return res.status(500).json({ error: '伺服器設定錯誤' });
     }
-
     if (secret !== expectedSecret) {
-        console.warn('⚠️ 未授權的請求: 密鑰不匹配');
         return res.status(403).json({ error: '未授權' });
     }
 
     // ============================================================
     // 4. 解析請求
     // ============================================================
-    const { action, text, voice, rate, sttAudio, prompt, systemPrompt } = req.body;
+    const { action, text, voice, rate, sttAudio, prompt } = req.body;
 
-    // 讀取環境變數
+    // 環境變數
     const subscriptionKey = process.env.AZURE_KEY;
     const region = process.env.AZURE_REGION || 'southeastasia';
     const openaiKey = process.env.AZURE_OPENAI_KEY;
@@ -46,9 +43,6 @@ export default async function handler(req, res) {
     const openaiDeployment = process.env.AZURE_OPENAI_DEPLOYMENT || 'gpt-5-mini';
     const sttKey = process.env.AZURE_STT_KEY || subscriptionKey;
 
-    // ============================================================
-    // 輔助函數：設定 CORS 標頭
-    // ============================================================
     function setCorsHeaders() {
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -56,10 +50,8 @@ export default async function handler(req, res) {
     }
 
     // ============================================================
-    // 5. 根據 action 轉發請求
+    // 5. Azure TTS (語音合成)
     // ============================================================
-
-    // ---- 5.1 Azure TTS (語音合成) ----
     if (action === 'tts') {
         if (!text) {
             setCorsHeaders();
@@ -87,7 +79,7 @@ export default async function handler(req, res) {
                 const errorText = await tokenResponse.text();
                 setCorsHeaders();
                 return res.status(tokenResponse.status).json({
-                    error: `Token 獲取失敗 (${tokenResponse.status}): ${errorText}`
+                    error: `Token 獲取失敗: ${errorText}`
                 });
             }
 
@@ -121,7 +113,7 @@ export default async function handler(req, res) {
                 const errorText = await ttsResponse.text();
                 setCorsHeaders();
                 return res.status(ttsResponse.status).json({
-                    error: `TTS 調用失敗 (${ttsResponse.status}): ${errorText}`
+                    error: `TTS 調用失敗: ${errorText}`
                 });
             }
 
@@ -143,7 +135,9 @@ export default async function handler(req, res) {
         }
     }
 
-    // ---- 5.2 Azure OpenAI (看圖造句 + 發音評分) ----
+    // ============================================================
+    // 6. Azure OpenAI (看圖造句 + 發音評分) — 最簡化版本
+    // ============================================================
     if (action === 'openai') {
         if (!openaiKey || !openaiEndpoint) {
             setCorsHeaders();
@@ -156,11 +150,15 @@ export default async function handler(req, res) {
         }
 
         try {
-            const messages = [];
-            if (systemPrompt) {
-                messages.push({ role: 'system', content: systemPrompt });
-            }
-            messages.push({ role: 'user', content: prompt });
+            // ★★★ 只使用最基本的參數 ★★★
+            const requestBody = {
+                messages: [
+                    { role: 'user', content: prompt }
+                ],
+                max_completion_tokens: 800
+            };
+
+            console.log('OpenAI 請求參數:', JSON.stringify(requestBody, null, 2));
 
             const gptResponse = await fetch(
                 `${openaiEndpoint}openai/deployments/${openaiDeployment}/chat/completions?api-version=2024-02-15-preview`,
@@ -170,16 +168,13 @@ export default async function handler(req, res) {
                         'api-key': openaiKey,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        messages: messages,
-                        temperature: 1,  // ← 改成 1 (模型要求)
-                        max_completion_tokens: 1000
-                    })
+                    body: JSON.stringify(requestBody)
                 }
             );
 
             if (!gptResponse.ok) {
                 const errorText = await gptResponse.text();
+                console.error('OpenAI 錯誤回應:', errorText);
                 setCorsHeaders();
                 return res.status(gptResponse.status).json({
                     error: `OpenAI 請求失敗 (${gptResponse.status}): ${errorText}`
@@ -202,7 +197,9 @@ export default async function handler(req, res) {
         }
     }
 
-    // ---- 5.3 Azure Speech-to-Text (語音轉文字) ----
+    // ============================================================
+    // 7. Azure Speech-to-Text (語音轉文字)
+    // ============================================================
     if (action === 'stt') {
         if (!sttKey) {
             setCorsHeaders();
@@ -253,7 +250,9 @@ export default async function handler(req, res) {
         }
     }
 
-    // ---- 5.4 未知 action ----
+    // ============================================================
+    // 8. 未知 action
+    // ============================================================
     setCorsHeaders();
     return res.status(400).json({ error: '未知的 action: ' + action });
 }
