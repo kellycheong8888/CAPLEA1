@@ -1,24 +1,50 @@
-// api/tts.js — Azure TTS Proxy (含 CORS 支援)
+// api/tts.js — Azure TTS Proxy (含密鑰驗證 + CORS)
 export default async function handler(req, res) {
-    // 處理 CORS 預檢請求 (OPTIONS)
+    // ============================================================
+    // 1. 處理 CORS 預檢請求 (OPTIONS)
+    // ============================================================
     if (req.method === 'OPTIONS') {
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-proxy-secret');
         return res.status(200).end();
     }
 
-    // 只允許 POST 請求
+    // ============================================================
+    // 2. 只允許 POST 請求
+    // ============================================================
     if (req.method !== 'POST') {
         return res.status(405).json({ error: '只允許 POST 請求' });
     }
 
+    // ============================================================
+    // 3. ★★★ 驗證密鑰 (保護 Azure 額度) ★★★
+    // ============================================================
+    const secret = req.headers['x-proxy-secret'];
+    const expectedSecret = process.env.PROXY_SECRET;
+
+    if (!expectedSecret) {
+        console.error('⚠️ 伺服器未設定 PROXY_SECRET 環境變數');
+        return res.status(500).json({ error: '伺服器設定錯誤' });
+    }
+
+    if (secret !== expectedSecret) {
+        console.warn('⚠️ 未授權的請求: 密鑰不匹配');
+        return res.status(403).json({ error: '未授權' });
+    }
+
+    // ============================================================
+    // 4. 解析請求參數
+    // ============================================================
     const { text, voice = 'pt-PT-FernandaNeural', rate = 1.0 } = req.body;
 
     if (!text) {
         return res.status(400).json({ error: '請提供文字 (text)' });
     }
 
+    // ============================================================
+    // 5. 讀取環境變數
+    // ============================================================
     const subscriptionKey = process.env.AZURE_KEY;
     const region = process.env.AZURE_REGION || 'southeastasia';
 
@@ -26,8 +52,11 @@ export default async function handler(req, res) {
         return res.status(500).json({ error: '伺服器未設定 Azure 金鑰' });
     }
 
+    // ============================================================
+    // 6. 獲取 Token
+    // ============================================================
     try {
-        console.log('正在獲取 Token...');
+        console.log('✅ 驗證通過，正在獲取 Token...');
         const tokenResponse = await fetch(
             `https://${region}.api.cognitive.microsoft.com/sts/v1.0/issuetoken`,
             {
@@ -55,6 +84,9 @@ export default async function handler(req, res) {
             return res.status(500).json({ error: '獲取到的 Token 無效' });
         }
 
+        // ============================================================
+        // 7. 呼叫 Azure TTS
+        // ============================================================
         const ssml = `
             <speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="pt-PT">
                 <voice name="${voice}">
@@ -88,15 +120,18 @@ export default async function handler(req, res) {
             });
         }
 
+        // ============================================================
+        // 8. 返回音頻
+        // ============================================================
         const audioBuffer = await ttsResponse.arrayBuffer();
         const base64Audio = Buffer.from(audioBuffer).toString('base64');
 
         console.log('TTS 成功！音頻大小:', audioBuffer.byteLength);
 
-        // ★★★ 加入 CORS 標頭 ★★★
+        // CORS 標頭
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-proxy-secret');
 
         res.status(200).json({
             success: true,
