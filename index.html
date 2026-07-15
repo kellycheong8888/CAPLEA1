@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>📖 跟讀文章 · 葡語 A1</title>
+    
+    <!-- ★★★ Google Analytics 統計代碼 ★★★ -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VB5QDP8LX9"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-VB5QDP8LX9');
+    </script>
+
     <style>
         * {
             box-sizing: border-box;
@@ -162,8 +172,6 @@
         .btn-hide-all:hover {
             background: #d5cfc7;
         }
-
-        /* ★★★ 分類切換按鈕 ★★★ */
         .category-tabs {
             display: flex;
             gap: 12px;
@@ -195,7 +203,6 @@
             border-color: #059669;
             color: #047857;
         }
-
         .article-tabs {
             display: flex;
             flex-wrap: wrap;
@@ -241,7 +248,6 @@
         .article-tabs button.active .zh-label {
             color: #c5b8a8;
         }
-
         .play-controls {
             display: flex;
             gap: 12px;
@@ -299,7 +305,6 @@
             opacity: 0.4;
             pointer-events: none;
         }
-
         .progress-wrap {
             background: #ede8e2;
             border-radius: 30px;
@@ -316,7 +321,6 @@
             border-radius: 30px;
             transition: width 0.2s;
         }
-
         .article-content {
             background: #fcf9f6;
             border-radius: 28px;
@@ -454,7 +458,6 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.3; }
         }
-
         .status-bar {
             display: flex;
             justify-content: space-between;
@@ -476,7 +479,6 @@
             color: #8f7a66;
             font-weight: 500;
         }
-
         .toast {
             position: fixed;
             bottom: 30px;
@@ -498,7 +500,6 @@
         .toast.show {
             opacity: 1;
         }
-
         @media (max-width: 768px) {
             body { padding: 12px; }
             .app { padding: 20px 16px 28px; border-radius: 32px; }
@@ -568,7 +569,7 @@
             <button class="btn-hide-all" id="hideAllBtn">🔒 全部遮擋</button>
         </div>
 
-        <!-- ★★★ 分類切換按鈕 ★★★ -->
+        <!-- 分類切換按鈕 -->
         <div class="category-tabs" id="categoryTabs">
             <button class="active-a1" data-category="a1">📘 A1-A2 看圖說話</button>
             <button data-category="a2">📗 A2-B1 看圖說話</button>
@@ -1646,6 +1647,7 @@
             let isSinglePlay = false;
             let isMasked = false;
             const PROXY_URL = 'https://azure-tts-proxy.vercel.app/api/tts';
+            const PROXY_SECRET = 'mysecret2026'; // ← 改成你自己設定的密碼，要跟 Vercel 的 PROXY_SECRET 一致！
             let useAzure = true;
             let currentAzureVoice = 'pt-PT-FernandaNeural';
 
@@ -1688,7 +1690,7 @@
             }
 
             // ============================================================
-            // 5. 語音函數
+            // 5. 語音函數（含密碼驗證）
             // ============================================================
             function base64ToBlob(base64, mimeType) {
                 const byteCharacters = atob(base64);
@@ -1711,10 +1713,14 @@
                 }
             }
 
+            // ★★★ Azure TTS (含密碼驗證) ★★★
             function speakWithAzure(text, callback) {
                 fetch(PROXY_URL, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-proxy-secret': PROXY_SECRET   // ← 加入密碼驗證
+                    },
                     body: JSON.stringify({
                         text: text,
                         voice: currentAzureVoice || 'pt-PT-FernandaNeural',
@@ -2294,7 +2300,7 @@
                 speedDisplay.textContent = speechRate.toFixed(2);
             });
 
-            // ★★★ 分類切換事件 ★★★
+            // 分類切換事件
             categoryTabs.addEventListener('click', function(e) {
                 const btn = e.target.closest('button');
                 if (!btn) return;
@@ -2330,6 +2336,8 @@
             console.log('📂 分類: A1-A2 (20篇) + A2-B1 (30篇)');
             console.log('🎙️ 可用語音: Fernanda, Raquel, Duarte, Francisca, Antonio');
             console.log('📌 點擊 🎙 錄音 | 點擊 🔊 回放錄音');
+            console.log('🔒 已啟用密碼驗證，保護 Azure 額度');
+            console.log('📊 Google Analytics 已啟用 (G-VB5QDP8LX9)');
         })();
     </script>
 </body>
