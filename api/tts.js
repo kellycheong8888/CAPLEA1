@@ -1,5 +1,13 @@
-// api/tts.js — Azure TTS Proxy (使用 Token 認證，完整版)
+// api/tts.js — Azure TTS Proxy (含 CORS 支援)
 export default async function handler(req, res) {
+    // 處理 CORS 預檢請求 (OPTIONS)
+    if (req.method === 'OPTIONS') {
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+        return res.status(200).end();
+    }
+
     // 只允許 POST 請求
     if (req.method !== 'POST') {
         return res.status(405).json({ error: '只允許 POST 請求' });
@@ -11,7 +19,6 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: '請提供文字 (text)' });
     }
 
-    // 從環境變數讀取金鑰和區域
     const subscriptionKey = process.env.AZURE_KEY;
     const region = process.env.AZURE_REGION || 'southeastasia';
 
@@ -20,7 +27,6 @@ export default async function handler(req, res) {
     }
 
     try {
-        // 步驟 1：獲取 Token
         console.log('正在獲取 Token...');
         const tokenResponse = await fetch(
             `https://${region}.api.cognitive.microsoft.com/sts/v1.0/issuetoken`,
@@ -49,7 +55,6 @@ export default async function handler(req, res) {
             return res.status(500).json({ error: '獲取到的 Token 無效' });
         }
 
-        // 步驟 2：使用 Token 調用 TTS
         const ssml = `
             <speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="pt-PT">
                 <voice name="${voice}">
@@ -83,11 +88,15 @@ export default async function handler(req, res) {
             });
         }
 
-        // 步驟 3：返回音頻
         const audioBuffer = await ttsResponse.arrayBuffer();
         const base64Audio = Buffer.from(audioBuffer).toString('base64');
 
         console.log('TTS 成功！音頻大小:', audioBuffer.byteLength);
+
+        // ★★★ 加入 CORS 標頭 ★★★
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
         res.status(200).json({
             success: true,
