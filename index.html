@@ -2012,12 +2012,12 @@
                     speakText(item.text, function() {
                         if (isCancelled) { isCancelled = false; return; }
                         if (isPlaying && !isPaused) {
-                            timeoutId = setTimeout(function() { speakNextSentence(index + 1); }, 500);
+                            timeoutId = setTimeout(function() { speakNextSentence(index + 1); }, 200);
                         }
                     });
                 } else {
                     if (isPlaying && !isPaused) {
-                        timeoutId = setTimeout(function() { speakNextSentence(index + 1); }, 300);
+                        timeoutId = setTimeout(function() { speakNextSentence(index + 1); }, 100);
                     }
                 }
             }
