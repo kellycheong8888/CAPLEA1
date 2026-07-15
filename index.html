@@ -65,12 +65,12 @@
         }
         .controls select {
             flex: 1;
-            min-width: 130px;
+            min-width: 180px;
             background: #ffffff;
             border: none;
             border-radius: 30px;
             padding: 8px 16px;
-            font-size: 14px;
+            font-size: 13px;
             color: #2d2a24;
             outline: none;
             cursor: pointer;
@@ -407,7 +407,7 @@
             .app { padding: 20px 16px 28px; border-radius: 32px; }
             .header h1 { font-size: 22px; }
             .controls { padding: 14px 16px; gap: 10px; }
-            .controls select { min-width: 80px; font-size: 13px; }
+            .controls select { min-width: 120px; font-size: 12px; }
             .controls .speed-group input[type="range"] { width: 80px; }
             .controls .readtone-hint { font-size: 10px; padding: 2px 10px; white-space: normal; }
             .article-tabs button {
@@ -442,17 +442,21 @@
         <div class="controls">
             <label>🎙️ 語音</label>
             <select id="voiceSelect">
-                <option value="azure">☁️ Azure 自然語音 (pt-PT-FernandaNeural)</option>
+                <option value="pt-PT-FernandaNeural">🇵🇹 Fernanda (女聲) - 標準</option>
+                <option value="pt-PT-RaquelNeural">🇵🇹 Raquel (女聲) - 自然</option>
+                <option value="pt-PT-DuarteNeural">🇵🇹 Duarte (男聲) - 沈穩</option>
+                <option value="pt-BR-FranciscaNeural">🇧🇷 Francisca (女聲) - 巴西</option>
+                <option value="pt-BR-AntonioNeural">🇧🇷 Antonio (男聲) - 巴西</option>
                 <option value="browser">🌐 瀏覽器語音 (備用)</option>
             </select>
-            <span class="voice-status fixed" id="voiceStatus">✅ Azure 已選</span>
+            <span class="voice-status fixed" id="voiceStatus">✅ Azure: pt-PT-FernandaNeural</span>
             <div class="speed-group">
                 <label>🐢</label>
                 <input type="range" id="speedSlider" min="0.4" max="1.8" step="0.05" value="0.85">
                 <span class="speed-val" id="speedDisplay">0.85</span>
                 <label>🐇</label>
             </div>
-            <span class="readtone-hint">💡 選擇 Azure 語音可獲得自然發音</span>
+            <span class="readtone-hint">💡 選擇不同語音，聽聽看哪個最適合</span>
         </div>
         <div class="top-actions">
             <button class="btn-toggle" id="toggleMaskBtn">🔒 遮擋葡語</button>
@@ -817,6 +821,7 @@
             let isMasked = false;
             const PROXY_URL = 'https://azure-tts-proxy.vercel.app/api/tts';
             let useAzure = true;
+            let currentAzureVoice = 'pt-PT-FernandaNeural';
 
             // ============================================================
             // 3. DOM 元素
@@ -856,34 +861,46 @@
                 let clean = text.replace(/[“”"']/g, '').trim();
                 if (!clean) { if (callback) callback(); return; }
                 if (useAzure) {
-                    fetch(PROXY_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ text: clean, voice: 'pt-PT-FernandaNeural', rate: speechRate })
-                    })
-                    .then(response => {
-                        if (!response.ok) return response.json().then(err => { throw new Error(err.error || 'Azure 請求失敗'); });
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (!data.success || !data.audio) throw new Error(data.error || 'Azure 回傳資料錯誤');
-                        const audioBlob = base64ToBlob(data.audio, 'audio/mp3');
-                        const audioUrl = URL.createObjectURL(audioBlob);
-                        const audio = new Audio(audioUrl);
-                        audio.play();
-                        audio.onended = function() { URL.revokeObjectURL(audioUrl); if (callback) callback(); };
-                        audio.onerror = function() { URL.revokeObjectURL(audioUrl); showToast('⚠️ Azure 語音播放失敗'); if (callback) callback(); };
-                    })
-                    .catch(error => {
-                        console.error('Azure TTS 錯誤:', error);
-                        showToast('⚠️ Azure 錯誤，改用瀏覽器語音');
-                        speakWithBrowser(clean, callback);
-                    });
+                    speakWithAzure(clean, callback);
                 } else {
                     speakWithBrowser(clean, callback);
                 }
             }
 
+            // --- Azure TTS (透過 Vercel 代理) ---
+            function speakWithAzure(text, callback) {
+                fetch(PROXY_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        text: text,
+                        voice: currentAzureVoice || 'pt-PT-FernandaNeural',
+                        rate: speechRate
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => { throw new Error(err.error || 'Azure 請求失敗'); });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (!data.success || !data.audio) throw new Error(data.error || 'Azure 回傳資料錯誤');
+                    const audioBlob = base64ToBlob(data.audio, 'audio/mp3');
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    const audio = new Audio(audioUrl);
+                    audio.play();
+                    audio.onended = function() { URL.revokeObjectURL(audioUrl); if (callback) callback(); };
+                    audio.onerror = function() { URL.revokeObjectURL(audioUrl); showToast('⚠️ Azure 語音播放失敗'); if (callback) callback(); };
+                })
+                .catch(error => {
+                    console.error('Azure TTS 錯誤:', error);
+                    showToast('⚠️ Azure 錯誤，改用瀏覽器語音');
+                    speakWithBrowser(text, callback);
+                });
+            }
+
+            // --- 瀏覽器語音 (備用) ---
             function speakWithBrowser(text, callback) {
                 if (currentUtterance) { window.speechSynthesis.cancel(); currentUtterance = null; }
                 const utterance = new SpeechSynthesisUtterance(text);
@@ -1211,11 +1228,21 @@
             showAllBtn.addEventListener('click', function() { removeMask(); showToast('🔓 全部顯示'); });
             hideAllBtn.addEventListener('click', function() { applyMask(); showToast('🔒 全部遮擋'); });
 
+            // ★★★ 新的語音切換邏輯 ★★★
             voiceSelect.addEventListener('change', function() {
-                useAzure = this.value === 'azure';
-                voiceStatus.textContent = useAzure ? '✅ Azure 已選' : '🌐 瀏覽器語音 (備用)';
-                voiceStatus.className = 'voice-status fixed';
-                showToast(`🔊 已切換至 ${useAzure ? 'Azure 自然語音' : '瀏覽器語音'}`);
+                const selectedVoice = this.value;
+                if (selectedVoice === 'browser') {
+                    useAzure = false;
+                    voiceStatus.textContent = '🌐 瀏覽器語音 (備用)';
+                    voiceStatus.className = 'voice-status fixed';
+                    showToast('🔊 已切換至瀏覽器語音');
+                } else {
+                    useAzure = true;
+                    currentAzureVoice = selectedVoice;
+                    voiceStatus.textContent = `✅ Azure: ${selectedVoice}`;
+                    voiceStatus.className = 'voice-status fixed';
+                    showToast(`🔊 已切換至 ${selectedVoice}`);
+                }
             });
 
             speedSlider.addEventListener('input', function() {
@@ -1239,6 +1266,7 @@
             renderArticle(0);
             document.getElementById('totalBadge').textContent = `${ARTICLES_RAW.length} 篇文章`;
             console.log('📖 跟讀文章已載入！使用 Azure 自然語音 (可切換)');
+            console.log('🎙️ 可用語音: Fernanda, Raquel, Duarte, Francisca, Antonio');
         })();
     </script>
 </body>
