@@ -292,7 +292,7 @@
     <div class="app" id="app">
         <div class="header">
             <h1>📖 葡語學習</h1>
-            <span class="badge" id="totalBadge">60 篇文章</span>
+            <span class="badge" id="totalBadge">70 篇文章</span>
         </div>
 
         <div class="controls">
@@ -329,7 +329,7 @@
 
             <div class="category-tabs" id="categoryTabs">
                 <button class="active-a1" data-category="a1">📘 A1-A2 看圖說話（50篇）</button>
-                <button data-category="a2">📗 A2-B1 看圖說話（10篇）</button>
+                <button data-category="a2">📗 A2-B1 看圖說話（20篇）</button>
             </div>
 
             <div class="pagination" id="pagination"></div>
@@ -375,7 +375,7 @@
 
     <script>
     // ================================================================
-    // 1. 文章數據 (60篇)
+    // 1. 文章數據 (70篇)
     // ================================================================
 
     // ---- A1-A2 看圖說話 (50篇) ----
@@ -1492,7 +1492,7 @@
         }
     ];
 
-    // ---- A2-B1 看圖說話 (10篇) ----
+    // ---- A2-B1 看圖說話 (20篇) ----
     const ARTICLES_A2 = [
         // 1. 家庭野餐
         {
@@ -1871,11 +1871,11 @@
     // 合併所有文章
     const ALL_ARTICLES = {
         a1: ARTICLES_A1, // 50篇
-        a2: ARTICLES_A2  // 10篇
+        a2: ARTICLES_A2  // 20篇
     };
 
     // ================================================================
-    // 2. 狀態變數
+    // 2. 共用變數
     // ================================================================
 
     let currentCategory = 'a1';
@@ -1896,25 +1896,16 @@
     let currentPage = 1;
     const ITEMS_PER_PAGE = 10;
 
-    let audioContext = null;
-    let mediaStream = null;
-    let recordedChunks = [];
+    let mediaRecorder = null;
+    let audioChunks = [];
     let isRecording = false;
-    let recordingStartTime = 0;
 
     const PROXY_URL = 'https://azure-tts-proxy.vercel.app/api/tts';
     const PROXY_SECRET = 'mysecret2026';
 
-    // ================================================================
-    // 3. DOM 元素
-    // ================================================================
-
-    const voiceSelect = document.getElementById('voiceSelect');
-    const voiceStatus = document.getElementById('voiceStatus');
-    const speedSlider = document.getElementById('speedSlider');
-    const speedDisplay = document.getElementById('speedDisplay');
-    const categoryTabs = document.getElementById('categoryTabs');
+    // DOM 元素
     const articleTabs = document.getElementById('articleTabs');
+    const categoryTabs = document.getElementById('categoryTabs');
     const articleContent = document.getElementById('articleContent');
     const playBtn = document.getElementById('playBtn');
     const pauseBtn = document.getElementById('pauseBtn');
@@ -1926,10 +1917,14 @@
     const toggleMaskBtn = document.getElementById('toggleMaskBtn');
     const showAllBtn = document.getElementById('showAllBtn');
     const hideAllBtn = document.getElementById('hideAllBtn');
+    const voiceSelect = document.getElementById('voiceSelect');
+    const voiceStatus = document.getElementById('voiceStatus');
+    const speedSlider = document.getElementById('speedSlider');
+    const speedDisplay = document.getElementById('speedDisplay');
     const totalBadge = document.getElementById('totalBadge');
 
     // ================================================================
-    // 4. 工具函數
+    // 3. 工具函數
     // ================================================================
 
     function showToast(msg) {
@@ -1964,7 +1959,7 @@
     }
 
     // ================================================================
-    // 5. 語音函數
+    // 4. 語音函數
     // ================================================================
 
     function speakText(text, callback) {
@@ -2017,7 +2012,7 @@
     }
 
     // ================================================================
-    // 6. Azure Speech-to-Text (用於發音評分)
+    // 5. Azure Speech-to-Text (用於發音評分)
     // ================================================================
 
     async function sttWithProxy(audioBase64) {
@@ -2037,7 +2032,7 @@
     }
 
     // ================================================================
-    // 7. 遮擋模式
+    // 6. 遮擋模式
     // ================================================================
 
     function applyMask() {
@@ -2064,7 +2059,7 @@
     }
 
     // ================================================================
-    // 8. 跟讀文章渲染
+    // 7. 跟讀文章渲染
     // ================================================================
 
     function renderTabs() {
@@ -2262,7 +2257,7 @@
     }
 
     // ================================================================
-    // 9. 播放邏輯
+    // 8. 播放邏輯
     // ================================================================
 
     function playSingleSentence(index) {
@@ -2357,7 +2352,7 @@
     }
 
     // ================================================================
-    // 10. 事件綁定
+    // 9. 事件綁定
     // ================================================================
 
     function bindEvents() {
@@ -2408,413 +2403,88 @@
     }
 
     // ================================================================
-    // 11. 錄音功能（手機相容優化版）
+    // 10. 錄音功能
     // ================================================================
 
-    // 檢查是否為 iOS Safari
-    function isIOS() {
-        return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    }
-
-    // 檢查是否為 Safari
-    function isSafari() {
-        return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-    }
-
     function toggleRecording(btn, key, index) {
-        // 如果正在錄音，停止
         if (isRecording) {
-            stopRecording(btn, key);
+            if (mediaRecorder) {
+                mediaRecorder.stop();
+                isRecording = false;
+                btn.textContent = '🎙 錄音';
+                btn.classList.remove('recording');
+                showToast('⏹️ 錄音已停止');
+            }
             return;
         }
 
-        // 檢查瀏覽器支援
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
             showToast('⚠️ 此瀏覽器不支援錄音功能');
             return;
         }
 
-        // 請求麥克風權限
-        const constraints = {
-            audio: {
-                echoCancellation: true,
-                noiseSuppression: true,
-                autoGainControl: true,
-                sampleRate: 16000,
-                channelCount: 1
-            }
-        };
-
-        // iOS Safari 特殊處理
-        if (isIOS() || isSafari()) {
-            // iOS Safari 不支援某些參數，簡化設定
-            constraints.audio = true;
-        }
-
-        navigator.mediaDevices.getUserMedia(constraints)
+        navigator.mediaDevices.getUserMedia({ audio: true })
             .then(stream => {
-                mediaStream = stream;
-                recordedChunks = [];
+                const options = { mimeType: 'audio/webm' };
+                if (!MediaRecorder.isTypeSupported('audio/webm')) { options.mimeType = 'audio/mp4'; }
+                mediaRecorder = new MediaRecorder(stream, options);
+                audioChunks = [];
+
+                mediaRecorder.ondataavailable = event => { if (event.data.size > 0) audioChunks.push(event.data); };
+
+                mediaRecorder.onstop = function() {
+                    const blob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
+                    if (blob.size === 0) { showToast('⚠️ 錄音檔案為空，請重新錄製'); return; }
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const base64 = e.target.result.split(',')[1];
+                            if (base64.length > 4000000) { showToast('⚠️ 錄音檔案太大，請縮短錄音時間'); return; }
+                            localStorage.setItem(key, base64);
+                            localStorage.setItem(key + '_type', mediaRecorder.mimeType || 'audio/webm');
+                            btn.textContent = '🎙 錄音';
+                            btn.classList.remove('recording');
+                            isRecording = false;
+                            const playbackBtn = btn.parentElement.querySelector('.playback-btn');
+                            if (playbackBtn) { playbackBtn.disabled = false; }
+                            const scoreBtn = btn.parentElement.querySelector('.score-btn');
+                            if (scoreBtn) { scoreBtn.disabled = false; }
+                            const statusSpan = btn.parentElement.querySelector('.record-status');
+                            if (!statusSpan) { const span = document.createElement('span'); span.className = 'record-status'; span.textContent = '✅'; btn.parentElement.appendChild(span); } else { statusSpan.textContent = '✅'; }
+                            showToast('✅ 錄音已儲存！');
+                        } catch (err) { showToast('⚠️ 錄音儲存失敗: ' + err.message); console.error('儲存錯誤:', err); }
+                    };
+                    reader.onerror = function() { showToast('⚠️ 讀取錄音檔案失敗'); };
+                    reader.readAsDataURL(blob);
+                    stream.getTracks().forEach(t => t.stop());
+                };
+
+                mediaRecorder.start();
                 isRecording = true;
-                recordingStartTime = Date.now();
                 btn.textContent = '⏹ 停止';
                 btn.classList.add('recording');
                 showToast('🎙 錄音中... 點擊停止');
-
-                // 嘗試使用 MediaRecorder（標準方式）
-                try {
-                    startMediaRecorder(stream, btn, key);
-                } catch (e) {
-                    console.warn('MediaRecorder 失敗，嘗試 AudioContext 方式:', e);
-                    // 如果 MediaRecorder 失敗，使用 AudioContext 方式
-                    startAudioContextRecording(stream, btn, key);
-                }
             })
             .catch(err => {
                 console.error('麥克風錯誤:', err);
-                if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-                    showToast('⚠️ 請允許麥克風權限後再試');
-                } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
-                    showToast('⚠️ 找不到麥克風裝置');
-                } else {
-                    showToast('⚠️ 無法存取麥克風: ' + err.message);
-                }
+                if (err.name === 'NotAllowedError') { showToast('⚠️ 請允許麥克風權限後再試'); } else if (err.name === 'NotFoundError') { showToast('⚠️ 找不到麥克風裝置'); } else { showToast('⚠️ 無法存取麥克風: ' + err.message); }
             });
     }
 
-    function startMediaRecorder(stream, btn, key) {
-        // 嘗試多種 MIME type（優先順序：iOS 相容 > 標準）
-        const mimeTypes = [
-            'audio/mp4',
-            'audio/webm;codecs=opus',
-            'audio/webm',
-            'audio/ogg;codecs=opus'
-        ];
-
-        let selectedMimeType = null;
-        for (const type of mimeTypes) {
-            if (MediaRecorder.isTypeSupported(type)) {
-                selectedMimeType = type;
-                break;
-            }
-        }
-
-        if (!selectedMimeType) {
-            // 如果都不支援，使用預設
-            selectedMimeType = 'audio/webm';
-        }
-
-        const options = { mimeType: selectedMimeType };
-        const recorder = new MediaRecorder(stream, options);
-
-        recorder.ondataavailable = event => {
-            if (event.data && event.data.size > 0) {
-                recordedChunks.push(event.data);
-            }
-        };
-
-        recorder.onstop = function() {
-            // 檢查錄音時長
-            const duration = (Date.now() - recordingStartTime) / 1000;
-            if (duration < 1.5) {
-                showToast('⚠️ 錄音太短（' + duration.toFixed(1) + '秒），請說完整句子');
-                // 清理資源
-                if (mediaStream) {
-                    mediaStream.getTracks().forEach(t => t.stop());
-                    mediaStream = null;
-                }
-                return;
-            }
-
-            // 創建 Blob
-            const mimeType = recorder.mimeType || 'audio/webm';
-            const blob = new Blob(recordedChunks, { type: mimeType });
-            recordedChunks = [];
-
-            if (blob.size < 2000) {
-                showToast('⚠️ 錄音檔案太小，請靠近麥克風說話');
-                if (mediaStream) {
-                    mediaStream.getTracks().forEach(t => t.stop());
-                    mediaStream = null;
-                }
-                return;
-            }
-
-            // 儲存錄音
-            saveRecording(blob, btn, key);
-        };
-
-        recorder.start(100); // 每 100ms 收集一次數據
-        // 儲存 recorder 以便停止
-        btn._recorder = recorder;
-    }
-
-    // 備用方案：使用 AudioContext 錄音（更相容）
-    function startAudioContextRecording(stream, btn, key) {
-        try {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const source = audioContext.createMediaStreamSource(stream);
-            const processor = audioContext.createScriptProcessor(4096, 1, 1);
-
-            source.connect(processor);
-            processor.connect(audioContext.destination);
-
-            const sampleRate = audioContext.sampleRate;
-            const pcmData = [];
-
-            processor.onaudioprocess = function(e) {
-                const inputData = e.inputBuffer.getChannelData(0);
-                // 轉換為 16-bit PCM
-                const pcm = new Int16Array(inputData.length);
-                for (let i = 0; i < inputData.length; i++) {
-                    const s = Math.max(-1, Math.min(1, inputData[i]));
-                    pcm[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
-                }
-                pcmData.push(pcm);
-            };
-
-            // 儲存清理函數
-            btn._audioContext = {
-                context: audioContext,
-                source: source,
-                processor: processor,
-                pcmData: pcmData,
-                sampleRate: sampleRate,
-                stream: stream
-            };
-
-            // 定時檢查錄音時長
-            btn._checkInterval = setInterval(() => {
-                if (!isRecording) return;
-                const duration = (Date.now() - recordingStartTime) / 1000;
-                if (duration > 30) {
-                    showToast('⏹️ 錄音超過 30 秒，自動停止');
-                    stopRecording(btn, key);
-                }
-            }, 5000);
-
-        } catch (e) {
-            console.error('AudioContext 錄音失敗:', e);
-            showToast('⚠️ 錄音初始化失敗: ' + e.message);
-            // 清理資源
-            if (mediaStream) {
-                mediaStream.getTracks().forEach(t => t.stop());
-                mediaStream = null;
-            }
-        }
-    }
-
-    function stopRecording(btn, key) {
-        isRecording = false;
-        btn.textContent = '🎙 錄音';
-        btn.classList.remove('recording');
-
-        // 清理 MediaRecorder
-        if (btn._recorder && btn._recorder.state === 'recording') {
-            try {
-                btn._recorder.stop();
-            } catch (e) {
-                console.warn('停止錄音錯誤:', e);
-            }
-            btn._recorder = null;
-        }
-
-        // 清理 AudioContext
-        if (btn._audioContext) {
-            try {
-                const { context, source, processor, pcmData, sampleRate, stream } = btn._audioContext;
-                
-                // 停止處理
-                if (processor) processor.disconnect();
-                if (source) source.disconnect();
-                if (context && context.state !== 'closed') {
-                    context.close().catch(e => console.warn('關閉 AudioContext 錯誤:', e));
-                }
-
-                // 如果有 PCM 數據，轉換為 WAV
-                if (pcmData && pcmData.length > 0) {
-                    const totalSamples = pcmData.reduce((sum, arr) => sum + arr.length, 0);
-                    const pcmBuffer = new Int16Array(totalSamples);
-                    let offset = 0;
-                    for (const arr of pcmData) {
-                        pcmBuffer.set(arr, offset);
-                        offset += arr.length;
-                    }
-
-                    // 創建 WAV 文件
-                    const wavBlob = createWavBlob(pcmBuffer, sampleRate || 16000);
-                    if (wavBlob && wavBlob.size > 2000) {
-                        saveRecording(wavBlob, btn, key);
-                    } else {
-                        showToast('⚠️ 錄音檔案太小，請重新錄製');
-                    }
-                } else {
-                    showToast('⚠️ 沒有錄到聲音，請重新錄製');
-                }
-
-                // 清理 stream
-                if (stream) {
-                    stream.getTracks().forEach(t => t.stop());
-                }
-            } catch (e) {
-                console.error('清理 AudioContext 錯誤:', e);
-                showToast('⚠️ 錄音處理失敗: ' + e.message);
-            }
-            btn._audioContext = null;
-        }
-
-        // 清理 timer
-        if (btn._checkInterval) {
-            clearInterval(btn._checkInterval);
-            btn._checkInterval = null;
-        }
-
-        // 清理 mediaStream
-        if (mediaStream) {
-            mediaStream.getTracks().forEach(t => t.stop());
-            mediaStream = null;
-        }
-
-        showToast('⏹️ 錄音已停止');
-    }
-
-    // 創建 WAV Blob
-    function createWavBlob(pcmData, sampleRate) {
-        try {
-            const numChannels = 1;
-            const bitsPerSample = 16;
-            const byteRate = sampleRate * numChannels * (bitsPerSample / 8);
-            const blockAlign = numChannels * (bitsPerSample / 8);
-            const dataSize = pcmData.length * (bitsPerSample / 8);
-
-            const buffer = new ArrayBuffer(44 + dataSize);
-            const view = new DataView(buffer);
-
-            // RIFF header
-            writeString(view, 0, 'RIFF');
-            view.setUint32(4, 36 + dataSize, true);
-            writeString(view, 8, 'WAVE');
-            writeString(view, 12, 'fmt ');
-            view.setUint32(16, 16, true);
-            view.setUint16(20, 1, true);
-            view.setUint16(22, numChannels, true);
-            view.setUint32(24, sampleRate, true);
-            view.setUint32(28, byteRate, true);
-            view.setUint16(32, blockAlign, true);
-            view.setUint16(34, bitsPerSample, true);
-            writeString(view, 36, 'data');
-            view.setUint32(40, dataSize, true);
-
-            // 寫入 PCM 數據
-            const offset = 44;
-            for (let i = 0; i < pcmData.length; i++) {
-                view.setInt16(offset + i * 2, pcmData[i], true);
-            }
-
-            return new Blob([buffer], { type: 'audio/wav' });
-        } catch (e) {
-            console.error('創建 WAV 失敗:', e);
-            return null;
-        }
-    }
-
-    function writeString(view, offset, string) {
-        for (let i = 0; i < string.length; i++) {
-            view.setUint8(offset + i, string.charCodeAt(i));
-        }
-    }
-
-    // 儲存錄音
-    function saveRecording(blob, btn, key) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const base64 = e.target.result.split(',')[1];
-                if (base64.length > 4000000) {
-                    showToast('⚠️ 錄音檔案太大，請縮短錄音時間');
-                    return;
-                }
-                
-                localStorage.setItem(key, base64);
-                localStorage.setItem(key + '_type', blob.type || 'audio/wav');
-                
-                // 更新 UI
-                const playbackBtn = btn.parentElement.querySelector('.playback-btn');
-                if (playbackBtn) { playbackBtn.disabled = false; }
-                const scoreBtn = btn.parentElement.querySelector('.score-btn');
-                if (scoreBtn) { scoreBtn.disabled = false; }
-                const statusSpan = btn.parentElement.querySelector('.record-status');
-                if (!statusSpan) {
-                    const span = document.createElement('span');
-                    span.className = 'record-status';
-                    span.textContent = '✅';
-                    btn.parentElement.appendChild(span);
-                } else {
-                    statusSpan.textContent = '✅';
-                }
-                
-                // 清理資源
-                if (mediaStream) {
-                    mediaStream.getTracks().forEach(t => t.stop());
-                    mediaStream = null;
-                }
-                
-                showToast('✅ 錄音已儲存！');
-            } catch (err) {
-                showToast('⚠️ 錄音儲存失敗: ' + err.message);
-                console.error('儲存錯誤:', err);
-            }
-        };
-        reader.onerror = function() {
-            showToast('⚠️ 讀取錄音檔案失敗');
-        };
-        reader.readAsDataURL(blob);
-    }
-
-    // ================================================================
-    // 12. 播放錄音（手機相容版）
-    // ================================================================
-
     function playRecording(key) {
         const data = localStorage.getItem(key);
-        if (!data) {
-            showToast('⚠️ 沒有找到錄音');
-            return;
-        }
+        if (!data) { showToast('⚠️ 沒有找到錄音'); return; }
         try {
-            // 嘗試多種 MIME type
-            let mimeType = localStorage.getItem(key + '_type') || 'audio/webm';
-            
+            const mimeType = localStorage.getItem(key + '_type') || 'audio/webm';
             const blob = base64ToBlob(data, mimeType);
-            if (blob.size === 0) {
-                showToast('⚠️ 錄音檔案已損毀');
-                return;
-            }
-            
+            if (blob.size === 0) { showToast('⚠️ 錄音檔案已損毀'); return; }
             const audioUrl = URL.createObjectURL(blob);
             const audio = new Audio(audioUrl);
-            audio.onerror = function(e) {
-                console.error('播放錯誤:', e);
-                showToast('⚠️ 無法播放錄音，可能格式不支援');
-                // 嘗試下載
-                downloadRecording(blob);
-            };
-            audio.onended = function() {
-                URL.revokeObjectURL(audioUrl);
-                showToast('✅ 回放結束');
-            };
+            audio.onerror = function(e) { console.error('播放錯誤:', e); showToast('⚠️ 無法播放錄音，可能格式不支援'); downloadRecording(blob); };
+            audio.onended = function() { URL.revokeObjectURL(audioUrl); showToast('✅ 回放結束'); };
             audio.play();
             showToast('🔊 回放錄音中...');
-        } catch (e) {
-            console.error('回放錯誤:', e);
-            showToast('⚠️ 無法讀取錄音檔案');
-            try {
-                const blob = base64ToBlob(data, 'audio/webm');
-                downloadRecording(blob);
-            } catch (err) {
-                showToast('⚠️ 錄音檔案已損毀，請重新錄製');
-            }
-        }
+        } catch (e) { console.error('回放錯誤:', e); showToast('⚠️ 無法讀取錄音檔案'); try { const blob = base64ToBlob(data, 'audio/webm'); downloadRecording(blob); } catch (err) { showToast('⚠️ 錄音檔案已損毀，請重新錄製'); } }
     }
 
     function downloadRecording(blob) {
@@ -2830,7 +2500,7 @@
     }
 
     // ================================================================
-    // 13. 發音評分 (使用 Azure Speech-to-Text)
+    // 11. 發音評分 (使用 Azure Speech-to-Text)
     // ================================================================
 
     function calculateSimilarity(str1, str2) {
@@ -2918,7 +2588,7 @@
     }
 
     // ================================================================
-    // 14. 練習記錄
+    // 12. 練習記錄
     // ================================================================
 
     function saveHistory(record) {
@@ -2985,7 +2655,7 @@
     }
 
     // ================================================================
-    // 15. 頁籤切換
+    // 13. 頁籤切換
     // ================================================================
 
     document.querySelectorAll('.tab-bar button').forEach(btn => {
@@ -3000,7 +2670,7 @@
     });
 
     // ================================================================
-    // 16. 控制事件
+    // 14. 控制事件
     // ================================================================
 
     playBtn.addEventListener('click', handlePlay);
@@ -3072,7 +2742,7 @@
         toggleMaskBtn.textContent = '🔒 遮擋葡語';
         toggleMaskBtn.classList.remove('unmask');
         renderArticle(0);
-        const catName = category === 'a1' ? 'A1-A2 看圖說話（50篇）' : 'A2-B1 看圖說話（10篇）';
+        const catName = category === 'a1' ? 'A1-A2 看圖說話（50篇）' : 'A2-B1 看圖說話（20篇）';
         showToast(`📂 已切換到 ${catName}`);
     });
 
@@ -3085,7 +2755,7 @@
     });
 
     // ================================================================
-    // 17. 鍵盤快捷鍵
+    // 15. 鍵盤快捷鍵
     // ================================================================
 
     document.addEventListener('keydown', function(e) {
@@ -3096,19 +2766,18 @@
     });
 
     // ================================================================
-    // 18. 初始化
+    // 16. 初始化
     // ================================================================
 
     renderArticle(0);
-    if (totalBadge) totalBadge.textContent = '60 篇文章';
+    if (totalBadge) totalBadge.textContent = '70 篇文章';
     renderHistory();
 
-    console.log('📖 葡語學習已載入！共 60 篇文章');
-    console.log('📂 分類: A1-A2 (50篇) + A2-B1 (10篇)');
+    console.log('📖 葡語學習已載入！共 70 篇文章');
+    console.log('📂 分類: A1-A2 (50篇) + A2-B1 (20篇)');
     console.log('📄 每頁顯示 10 篇文章');
     console.log('🔒 已啟用密碼驗證，保護 Azure 額度');
     console.log('📊 Google Analytics 已啟用 (G-VB5QDP8LX9)');
-    console.log('📱 手機錄音相容優化版已啟用');
 
     </script>
 </body>
