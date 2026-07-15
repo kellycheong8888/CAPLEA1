@@ -45,38 +45,11 @@
             flex-wrap: wrap;
             gap: 12px;
         }
-        .header h1 {
-            font-size: 28px;
-            font-weight: 700;
-            color: #2d2a24;
-        }
-        .header .badge {
-            background: #e8e4de;
-            padding: 8px 22px;
-            border-radius: 30px;
-            font-size: 14px;
-            font-weight: 500;
-            color: #3d352c;
-        }
-        .tab-bar {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 24px;
-            border-bottom: 2px solid #e8e4de;
-            padding-bottom: 8px;
-            flex-wrap: wrap;
-        }
-        .tab-bar button {
-            border: none;
-            background: transparent;
-            padding: 10px 22px;
-            border-radius: 30px;
-            font-size: 15px;
-            font-weight: 600;
-            color: #5f5346;
-            cursor: pointer;
-            transition: 0.2s;
-        }
+        .header h1 { font-size: 28px; font-weight: 700; color: #2d2a24; }
+        .header .badge { background: #e8e4de; padding: 8px 22px; border-radius: 30px; font-size: 14px; font-weight: 500; color: #3d352c; }
+
+        .tab-bar { display: flex; gap: 8px; margin-bottom: 24px; border-bottom: 2px solid #e8e4de; padding-bottom: 8px; flex-wrap: wrap; }
+        .tab-bar button { border: none; background: transparent; padding: 10px 22px; border-radius: 30px; font-size: 15px; font-weight: 600; color: #5f5346; cursor: pointer; transition: 0.2s; }
         .tab-bar button:hover { background: #f0ece6; }
         .tab-bar button.active { background: #2d2a24; color: #ffffff; }
         .tab-content { display: none; }
@@ -93,24 +66,8 @@
             align-items: center;
         }
         .controls label { font-size: 14px; font-weight: 500; color: #5f5346; }
-        .controls select {
-            flex: 1;
-            min-width: 180px;
-            background: #ffffff;
-            border: none;
-            border-radius: 30px;
-            padding: 8px 16px;
-            font-size: 13px;
-            color: #2d2a24;
-            outline: none;
-            cursor: pointer;
-        }
-        .controls .voice-status {
-            font-size: 12px;
-            font-weight: 600;
-            padding: 4px 14px;
-            border-radius: 30px;
-        }
+        .controls select { flex: 1; min-width: 180px; background: #ffffff; border: none; border-radius: 30px; padding: 8px 16px; font-size: 13px; color: #2d2a24; outline: none; cursor: pointer; }
+        .controls .voice-status { font-size: 12px; font-weight: 600; padding: 4px 14px; border-radius: 30px; }
         .controls .voice-status.fixed { color: #1e7b4a; background: #e6f5ed; }
         .controls .voice-status.not-fixed { color: #b13e3e; background: #f5e6e6; }
         .controls .speed-group { display: flex; align-items: center; gap: 10px; }
@@ -119,18 +76,7 @@
         .controls .readtone-hint { font-size: 12px; color: #7a8a9a; background: #eef4fa; padding: 4px 14px; border-radius: 30px; white-space: nowrap; }
 
         .top-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
-        .top-actions button {
-            border: none;
-            border-radius: 40px;
-            padding: 10px 20px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.15s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+        .top-actions button { border: none; border-radius: 40px; padding: 10px 20px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.15s; display: flex; align-items: center; gap: 6px; }
         .top-actions button:active { transform: scale(0.95); }
         .btn-toggle { background: #2d2a24; color: #ffffff; }
         .btn-toggle:hover { background: #1f1b16; }
@@ -141,80 +87,22 @@
         .btn-hide-all { background: #e8e4de; color: #5f5346; }
         .btn-hide-all:hover { background: #d5cfc7; }
 
-        .category-tabs {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 20px;
-            padding: 4px;
-        }
-        .category-tabs button {
-            flex: 1;
-            border: 2px solid #d0d8e0;
-            border-radius: 40px;
-            padding: 12px 18px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.2s;
-            background: #f5f7fa;
-            color: #4a5a6a;
-        }
+        .category-tabs { display: flex; gap: 12px; margin-bottom: 20px; padding: 4px; }
+        .category-tabs button { flex: 1; border: 2px solid #d0d8e0; border-radius: 40px; padding: 12px 18px; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.2s; background: #f5f7fa; color: #4a5a6a; }
         .category-tabs button:hover { background: #e8edf2; }
         .category-tabs button.active-a1 { background: #dbeafe; border-color: #2563eb; color: #1d4ed8; }
         .category-tabs button.active-a2 { background: #d1fae5; border-color: #059669; color: #047857; }
 
-        .article-tabs {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 20px;
-            min-height: 48px;
-        }
-        .article-tabs button {
-            flex: 0 0 calc(20% - 8px);
-            min-width: 0;
-            padding: 10px 6px;
-            border: 2px solid #e0d8cf;
-            border-radius: 40px;
-            background: transparent;
-            font-size: 13px;
-            font-weight: 600;
-            color: #5f5346;
-            cursor: pointer;
-            transition: 0.15s;
-            text-align: center;
-            line-height: 1.3;
-            word-break: break-word;
-            white-space: normal;
-        }
+        .article-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; min-height: 48px; }
+        .article-tabs button { flex: 0 0 calc(20% - 8px); min-width: 0; padding: 10px 6px; border: 2px solid #e0d8cf; border-radius: 40px; background: transparent; font-size: 13px; font-weight: 600; color: #5f5346; cursor: pointer; transition: 0.15s; text-align: center; line-height: 1.3; word-break: break-word; white-space: normal; }
         .article-tabs button:active { transform: scale(0.96); }
         .article-tabs button.active { background: #2d2a24; color: #ffffff; border-color: #2d2a24; }
         .article-tabs button .icon { font-size: 14px; }
         .article-tabs button .zh-label { display: block; font-size: 10px; font-weight: 400; color: #8a7e72; margin-top: 2px; }
         .article-tabs button.active .zh-label { color: #c5b8a8; }
 
-        .play-controls {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 18px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .play-controls button {
-            border: none;
-            border-radius: 50px;
-            padding: 16px 32px;
-            font-size: 17px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.15s;
-            flex: 1;
-            min-width: 100px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
+        .play-controls { display: flex; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; justify-content: center; }
+        .play-controls button { border: none; border-radius: 50px; padding: 16px 32px; font-size: 17px; font-weight: 600; cursor: pointer; transition: 0.15s; flex: 1; min-width: 100px; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .play-controls button:active { transform: scale(0.95); }
         .btn-play { background: #2d2a24; color: #ffffff; }
         .btn-play:active { background: #1f1b16; }
@@ -226,15 +114,7 @@
         .btn-resume:active { background: #1f5f3a; }
         .btn-resume:disabled { opacity: 0.4; pointer-events: none; }
 
-        .progress-wrap {
-            background: #ede8e2;
-            border-radius: 30px;
-            height: 8px;
-            margin-bottom: 18px;
-            overflow: hidden;
-            cursor: pointer;
-            position: relative;
-        }
+        .progress-wrap { background: #ede8e2; border-radius: 30px; height: 8px; margin-bottom: 18px; overflow: hidden; cursor: pointer; position: relative; }
         .progress-bar { height: 100%; width: 0%; background: #8f7a66; border-radius: 30px; transition: width 0.2s; }
 
         .article-content {
@@ -364,41 +244,13 @@
         .ai-vision-container { display: flex; flex-direction: column; gap: 16px; }
         .ai-upload-area { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
         .ai-upload-area input[type="file"] { display: none; }
-        .ai-upload-area .file-label {
-            background: #2d2a24;
-            color: white;
-            padding: 10px 24px;
-            border-radius: 40px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 14px;
-            display: inline-block;
-        }
+        .ai-upload-area .file-label { background: #2d2a24; color: white; padding: 10px 24px; border-radius: 40px; font-weight: 600; cursor: pointer; font-size: 14px; display: inline-block; }
         .ai-upload-area .file-label:hover { background: #1f1b16; }
         .ai-upload-area .file-name { color: #5f5346; font-size: 14px; }
-        .ai-upload-area select {
-            padding: 10px 18px;
-            border-radius: 40px;
-            border: 2px solid #d0d8e0;
-            background: white;
-            font-size: 14px;
-            font-weight: 600;
-            color: #2d2a24;
-            cursor: pointer;
-        }
+        .ai-upload-area select { padding: 10px 18px; border-radius: 40px; border: 2px solid #d0d8e0; background: white; font-size: 14px; font-weight: 600; color: #2d2a24; cursor: pointer; }
         .ai-image-preview { max-width: 100%; max-height: 300px; border-radius: 16px; border: 1px solid #e0d8cf; display: none; margin: 8px 0; }
         .ai-image-preview.show { display: block; }
-        .ai-generate-btn {
-            background: #2563eb;
-            color: white;
-            border: none;
-            padding: 10px 28px;
-            border-radius: 40px;
-            font-weight: 700;
-            font-size: 15px;
-            cursor: pointer;
-            transition: 0.15s;
-        }
+        .ai-generate-btn { background: #2563eb; color: white; border: none; padding: 10px 28px; border-radius: 40px; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.15s; }
         .ai-generate-btn:hover { background: #1d4ed8; }
         .ai-generate-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .ai-result-area { margin-top: 12px; border-top: 1px solid #e8e4de; padding-top: 16px; }
@@ -412,42 +264,18 @@
         .ai-result-area .sentence-block .pt-line { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
         .ai-result-area .sentence-block .zh-line { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding-left: 24px; }
 
-        .history-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 12px;
-            margin-bottom: 20px;
-        }
+        .history-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-bottom: 20px; }
         .history-stats .stat-card { background: #f5f7fa; padding: 14px 16px; border-radius: 16px; text-align: center; }
         .history-stats .stat-card .stat-number { font-size: 24px; font-weight: 700; color: #2d2a24; }
         .history-stats .stat-card .stat-label { font-size: 12px; color: #6b7a8a; }
         .history-list { max-height: 350px; overflow-y: auto; }
-        .history-list .history-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 12px;
-            border-bottom: 1px solid #e8e4de;
-            font-size: 14px;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
+        .history-list .history-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-bottom: 1px solid #e8e4de; font-size: 14px; flex-wrap: wrap; gap: 6px; }
         .history-list .history-item .h-date { color: #6b7a8a; font-size: 12px; }
         .history-list .history-item .h-score { font-weight: 700; color: #16a34a; }
         .history-list .history-item .h-type { background: #e8e4de; padding: 2px 10px; border-radius: 20px; font-size: 12px; }
         .history-list .history-item .h-view { color: #2563eb; cursor: pointer; font-weight: 600; font-size: 12px; }
         .history-list .history-item .h-view:hover { text-decoration: underline; }
-        .history-clear-btn {
-            background: #dc2626;
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 13px;
-            cursor: pointer;
-            margin-top: 12px;
-        }
+        .history-clear-btn { background: #dc2626; color: white; border: none; padding: 8px 20px; border-radius: 40px; font-weight: 600; font-size: 13px; cursor: pointer; margin-top: 12px; }
         .history-clear-btn:hover { background: #b91c1c; }
 
         @media (max-width: 768px) {
@@ -599,32 +427,1022 @@
 
     <script>
     // ================================================================
-    // 1. 文章數據 (50篇)
+    // 1. 文章數據 (50篇) — 完整版
     // ================================================================
 
-    // 為了節省篇幅，文章數據被濃縮。但完整代碼中包含全部20篇A1和30篇A2。
-    // 由於對話框字數限制，此處省略完整文章數據。
-    // 請使用你原本已有的 ARTICLES_A1 和 ARTICLES_A2 數據。
-    // ================================================================
-
-    // 注意：此代碼為示範框架，實際使用時請將完整的 50 篇文章數據貼在此處。
-    // 你可以從之前的備份中複製 ARTICLES_A1 和 ARTICLES_A2。
-
-    const ARTICLES_A1 = [];
-    const ARTICLES_A2 = [];
-
-    // 模擬數據，實際使用時請替換為完整文章
-    // 為避免空白頁，加入一篇示例文章
-    ARTICLES_A1.push({
+    const ARTICLES_A1 = [{
         id: 'a1_1',
         title: 'Casa de banho',
         titleZh: '浴室',
         icon: '🛁',
         sentences: [
             { text: 'Nesta imagem, vejo uma casa de banho moderna e funcional.', type: 'pt' },
-            { text: '在这张图片里，我看到一间现代且实用的浴室。', type: 'zh' }
+            { text: '在这张图片里，我看到一间现代且实用的浴室。', type: 'zh' },
+            { text: 'A banheira está ao lado da janela.', type: 'pt' },
+            { text: '浴缸在窗户旁边。', type: 'zh' },
+            { text: 'Ao lado da banheira, está o tapete.', type: 'pt' },
+            { text: '浴缸旁边有地毯。', type: 'zh' },
+            { text: 'A sanita está ao lado do bidé.', type: 'pt' },
+            { text: '马桶在坐浴盆旁边。', type: 'zh' },
+            { text: 'O lavatório está em frente ao espelho.', type: 'pt' },
+            { text: '洗手台在镜子前面。', type: 'zh' },
+            { text: 'O esquentador está pendurado na parede.', type: 'pt' },
+            { text: '热水器挂在墙上。', type: 'zh' },
+            { text: 'A máquina de lavar roupa está ao lado da porta.', type: 'pt' },
+            { text: '洗衣机在门旁边。', type: 'zh' },
+            { text: 'A casa de banho é pequena mas está muito limpa e arrumada.', type: 'pt' },
+            { text: '浴室虽小，但非常干净整洁。', type: 'zh' }
         ]
-    });
+    }, {
+        id: 'a1_2',
+        title: 'Cozinha',
+        titleZh: '廚房',
+        icon: '🍳',
+        sentences: [
+            { text: 'Nesta imagem, vejo uma cozinha moderna e bem equipada.', type: 'pt' },
+            { text: '在这张图片里，我看到一间现代且设备齐全的厨房。', type: 'zh' },
+            { text: 'O fogão e o forno estão ao lado da janela.', type: 'pt' },
+            { text: '炉灶和烤箱在窗户旁边。', type: 'zh' },
+            { text: 'O frigorífico está ao lado da porta.', type: 'pt' },
+            { text: '冰箱在门旁边。', type: 'zh' },
+            { text: 'Em cima da bancada, está o micro-ondas.', type: 'pt' },
+            { text: '微波炉在台面上。', type: 'zh' },
+            { text: 'A mesa está no centro da cozinha.', type: 'pt' },
+            { text: '桌子在厨房中央。', type: 'zh' },
+            { text: 'Os armários estão na parede.', type: 'pt' },
+            { text: '橱柜在墙上。', type: 'zh' },
+            { text: 'A cozinha é espaçosa e tem boa luz natural.', type: 'pt' },
+            { text: '厨房很宽敞，自然光线很好。', type: 'zh' }
+        ]
+    }, {
+        id: 'a1_3',
+        title: 'Quarto',
+        titleZh: '臥室',
+        icon: '🛏️',
+        sentences: [
+            { text: 'Nesta imagem, vejo um quarto grande e confortável.', type: 'pt' },
+            { text: '在这张图片里，我看到一间又大又舒适的卧室。', type: 'zh' },
+            { text: 'A cama está no centro do quarto.', type: 'pt' },
+            { text: '床在房间中央。', type: 'zh' },
+            { text: 'Ao lado da cama, está a mesa de cabeceira com um candeeiro.', type: 'pt' },
+            { text: '床旁边有带台灯的床头柜。', type: 'zh' },
+            { text: 'O armário está na parede, ao fundo.', type: 'pt' },
+            { text: '衣柜在后面墙上。', type: 'zh' },
+            { text: 'A secretária está perto da janela e o computador está em cima da secretária.', type: 'pt' },
+            { text: '书桌在窗户旁边，电脑在书桌上。', type: 'zh' },
+            { text: 'As cortinas são azuis.', type: 'pt' },
+            { text: '窗帘是蓝色的。', type: 'zh' },
+            { text: 'O quarto é tranquilo e parece um bom lugar para descansar.', type: 'pt' },
+            { text: '房间很安静，看起来是一个休息的好地方。', type: 'zh' }
+        ]
+    }, {
+        id: 'a1_4',
+        title: 'Sala de estar',
+        titleZh: '客廳',
+        icon: '🛋️',
+        sentences: [
+            { text: 'Nesta imagem, vejo uma sala de estar acolhedora.', type: 'pt' },
+            { text: '在这张图片里，我看到一间温馨的客厅。', type: 'zh' },
+            { text: 'O sofá está no centro da sala, em frente à televisão.', type: 'pt' },
+            { text: '沙发在客厅中央，在电视对面。', type: 'zh' },
+            { text: 'A mesa de centro está à frente do sofá, com livros e uma chávena.', type: 'pt' },
+            { text: '茶几在沙发前面，上面有书和杯子。', type: 'zh' },
+            { text: 'Ao lado do sofá, está a estante com muitos livros.', type: 'pt' },
+            { text: '沙发旁边有书架，上面有很多书。', type: 'zh' },
+            { text: 'As cortinas são bege e há um tapete grande no chão.', type: 'pt' },
+            { text: '窗帘是米色的，地板上有大地毯。', type: 'zh' },
+            { text: 'A sala é confortável e parece um bom espaço para relaxar com a família.', type: 'pt' },
+            { text: '客厅很舒适，看起来是一个和家人放松的好地方。', type: 'zh' }
+        ]
+    }, {
+        id: 'a1_5',
+        title: 'Jantar em Família',
+        titleZh: '家庭晚餐',
+        icon: '🍽️',
+        sentences: [
+            { text: 'Nesta imagem, vejo seis pessoas numa sala de jantar.', type: 'pt' },
+            { text: '在這張圖裡，我看見餐廳裡有六個人。', type: 'zh' },
+            { text: 'São os avós, os pais, uma menina e um bebé.', type: 'pt' },
+            { text: '他們是祖父母、父母、小女孩和小寶寶。', type: 'zh' },
+            { text: 'Na mesa há arroz, carne e vegetais.', type: 'pt' },
+            { text: '桌子上有米飯、肉和蔬菜。', type: 'zh' },
+            { text: 'A família está feliz a jantar junta.', type: 'pt' },
+            { text: '一家人開心的一起吃晚餐。', type: 'zh' },
+            { text: 'Eu gosto de jantar com a minha família.', type: 'pt' },
+            { text: '我喜歡和家人一起吃飯。', type: 'zh' }
+        ]
+    }, {
+        id: 'a1_6',
+        title: 'Mãe e Filha no Jardim',
+        titleZh: '花園母女',
+        icon: '🌺',
+        sentences: [
+            { text: 'Nesta imagem, vejo uma mãe e uma filha num jardim.', type: 'pt' },
+            { text: '在這張圖裡，我看見花園裡有一位媽媽和女兒。', type: 'zh' },
+            { text: 'Elas cuidam das flores e das plantas verdes.', type: 'pt' },
+            { text: '她們在照料花朵和綠色植物。', type: 'zh' },
+            { text: 'A mãe usa um regador para regar as flores.', type: 'pt' },
+            { text: '媽媽用水壺澆花。', type: 'zh' },
+            { text: 'As duas estão muito contentes.', type: 'pt' },
+            { text: '她們兩人非常開心。', type: 'zh' },
+            { text: 'É uma atividade bonita no tempo livre.', type: 'pt' },
+            { text: '這是很棒的休閒活動。', type: 'zh' }
+        ]
+    }, {
+        id: 'a1_7',
+        title: 'Menina a Ler',
+        titleZh: '女孩閱讀',
+        icon: '📖',
+        sentences: [
+            { text: 'Nesta imagem, vejo uma menina no sofá da sala.', type: 'pt' },
+            { text: '在這張圖裡，我看見小女孩坐在客廳沙發上。', type: 'zh' },
+            { text: 'Ela está a ler um livro pequeno.', type: 'pt' },
+            { text: '她正在看一本小書。', type: 'zh' },
+            { text: 'Ao lado dela há uma lâmpada de mesa.', type: 'pt' },
+            { text: '她旁邊有一盞台燈。', type: 'zh' },
+            { text: 'A sala é calma e confortável.', type: 'pt' },
+            { text: '房間安靜又舒服。', type: 'zh' },
+            { text: 'Ela gosta de ler no tempo livre.', type: 'pt' },
+            { text: '她喜歡在空閒時間看書。', type: 'zh' }
+        ]
+    }, {
+        id: 'a1_8',
+        title: 'Irmãos a Ver TV',
+        titleZh: '看電視',
+        icon: '📺',
+        sentences: [
+            { text: 'Nesta imagem, vejo dois irmãos no sofá de casa.', type: 'pt' },
+            { text: '在這張圖裡，我看見姐弟兩坐在家裡沙發上。', type: 'zh' },
+            { text: 'Eles estão a ver um desenho animado na televisão.', type: 'pt' },
+            { text: '他們正在電視上看動畫片。', type: 'zh' },
+            { text: 'Na mesa há bolachas e suco de fruta.', type: 'pt' },
+            { text: '茶几上有餅乾和果汁。', type: 'zh' },
+            { text: 'Eles passam o tempo livre juntos.', type: 'pt' },
+            { text: '他們一起度過空閒時間。', type: 'zh' },
+            { text: 'A cena é calma e divertida.', type: 'pt' },
+            { text: '畫面安靜又有趣。', type: 'zh' }
+        ]
+    }, {
+        id: 'a1_9',
+        title: 'Família a Brincar',
+        titleZh: '遊戲家庭',
+        icon: '🧸',
+        sentences: [
+            { text: 'Nesta imagem, vejo uma família de quatro pessoas.', type: 'pt' },
+            { text: '在這張圖裡，我看見一個四口之家。', type: 'zh' },
+            { text: 'Eles estão na sala de estar da casa.', type: 'pt' },
+            { text: '他們在家裡的客廳。', type: 'zh' },
+            { text: 'As crianças brincam com muitos brinquedos.', type: 'pt' },
+            { text: '小朋友們在玩很多玩具。', type: 'zh' },
+            { text: 'Os pais estão ao lado dos filhos.', type: 'pt' },
+            { text: '爸爸媽媽在孩子身旁。', type: 'zh' },
+            { text: 'Toda a família está muito feliz.', type: 'pt' },
+            { text: '全家人都非常開心。', type: 'zh' }
+        ]
+    }, {
+        id: 'a1_10',
+        title: 'Mãe a Cuidar do Filho',
+        titleZh: '照顧生病孩子',
+        icon: '🤒',
+        sentences: [
+            { text: 'Nesta imagem, vejo uma mãe e um menino doente.', type: 'pt' },
+            { text: '在這張圖裡，我看見一位媽媽和生病的小男孩。', type: 'zh' },
+            { text: 'Eles estão no quarto da casa.', type: 'pt' },
+            { text: '他們在家裡的臥室。', type: 'zh' },
+            { text: 'O menino está deitado na cama e tem febre.', type: 'pt' },
+            { text: '小男孩躺在床上、發燒了。', type: 'zh' },
+            { text: 'A mãe dá água e medicamento ao filho.', type: 'pt' },
+            { text: '媽媽給孩子喝水、吃藥。', type: 'zh' },
+            { text: 'A sala está muito calma.', type: 'pt' },
+            { text: '房間非常安靜。', type: 'zh' }
+        ]
+    }, {
+        id: 'a1_11',
+        title: 'Natal em Família',
+        titleZh: '家庭聖誕',
+        icon: '🎄',
+        sentences: [
+            { text: 'Nesta imagem, vejo uma família perto da árvore de Natal.', type: 'pt' },
+            { text: '在這張圖裡，我看見一家人在聖誕樹旁邊。', type: 'zh' },
+            { text: 'Eles abrem muitas caixas de presentes.', type: 'pt' },
+            { text: '他們拆開很多禮物盒。', type: 'zh' },
+            { text: 'As crianças têm brinquedos novos.', type: 'pt' },
+            { text: '小朋友們有新玩具。', type: 'zh' },
+            { text: 'A família está junta em casa.', type: 'pt' },
+            { text: '全家人在家團聚。', type: 'zh' },
+            { text: 'O dia de Natal é muito alegre.', type: 'pt' },
+            { text: '聖誕節是很快樂的日子。', type: 'zh' }
+        ]
+    }, {
+        id: 'a1_12',
+        title: 'Menina no Parque',
+        titleZh: '公園女孩',
+        icon: '🏃',
+        sentences: [
+            { text: 'Nesta imagem, vejo uma menina pequena no parque.', type: 'pt' },
+            { text: '在這張圖裡，我看見公園裡有一個小女孩。', type: 'zh' },
+            { text: 'Ela veste um vestido vermelho e corre na relva.', type: 'pt' },
+            { text: '她穿紅色連衣裙，在草坪上奔跑。', type: 'zh' },
+            { text: 'O dia está ensolarado e muito bonito.', type: 'pt' },
+            { text: '今天陽光充足、天氣很好。', type: 'zh' },
+            { text: 'A menina sorri e está muito feliz.', type: 'pt' },
+            { text: '小女孩在微笑，非常開心。', type: 'zh' },
+            { text: 'Ela gosta de brincar ao ar livre.', type: 'pt' },
+            { text: '她喜歡在戶外玩耍。', type: 'zh' }
+        ]
+    }, {
+        id: 'a1_13',
+        title: 'Pai e Filho a Jogar Futebol',
+        titleZh: '足球父子',
+        icon: '⚽',
+        sentences: [
+            { text: 'Nesta imagem, vejo um pai e um filho no parque.', type: 'pt' },
+            { text: '在這張圖裡，我看見公園裡的爸爸和兒子。', type: 'zh' },
+            { text: 'Eles jogam futebol na relva verde.', type: 'pt' },
+            { text: '他們在綠草坪上踢足球。', type: 'zh' },
+            { text: 'O menino corre atrás da bola de futebol.', type: 'pt' },
+            { text: '小男孩追著足球跑。', type: 'zh' },
+            { text: 'O céu é azul e o tempo está bom.', type: 'pt' },
+            { text: '天空很藍、天氣很好。', type: 'zh' },
+            { text: 'Eles divertem-se muito juntos.', type: 'pt' },
+            { text: '他們一起玩得很開心。', type: 'zh' }
+        ]
+    }, {
+        id: 'a1_14',
+        title: 'Piquenique na Praia',
+        titleZh: '海灘野餐',
+        icon: '🏖️',
+        sentences: [
+            { text: 'Nesta imagem, vejo muitas pessoas na praia.', type: 'pt' },
+            { text: '在這張圖裡，我看見沙灘上有很多人。', type: 'zh' },
+            { text: 'Uma família está a fazer um piquenique.', type: 'pt' },
+            { text: '有一家人正在野餐。', type: 'zh' },
+            { text: 'O tempo está muito bom e há muito sol.', type: 'pt' },
+            { text: '天氣非常好，陽光很充足。', type: 'zh' },
+            { text: 'Todos estão felizes a brincar na areia.', type: 'pt' },
+            { text: '大家開心的在沙地上玩耍。', type: 'zh' },
+            { text: 'É um dia muito agradável.', type: 'pt' },
+            { text: '這是很舒服的一天。', type: 'zh' }
+        ]
+    }, {
+        id: 'a1_15',
+        title: 'Piquenique na Relva',
+        titleZh: '草地野餐',
+        icon: '🧺',
+        sentences: [
+            { text: 'Nesta imagem, vejo pessoas a fazer piquenique na relva.', type: 'pt' },
+            { text: '在這張圖裡，我看見人們在草坪野餐。', type: 'zh' },
+            { text: 'Elas comem peixe e arroz e bebem água.', type: 'pt' },
+            { text: '他們吃魚、米飯，也喝水。', type: 'zh' },
+            { text: 'O dia é bonito e ensolarado.', type: 'pt' },
+            { text: '天氣很好、陽光普照。', type: 'zh' },
+            { text: 'As pessoas estão calmas e relaxadas.', type: 'pt' },
+            { text: '人們很放鬆、很悠閒。', type: 'zh' },
+            { text: 'Gosto muito de piqueniques no parque.', type: 'pt' },
+            { text: '我很喜歡在公園野餐。', type: 'zh' }
+        ]
+    }, {
+        id: 'a1_16',
+        title: 'Crianças no Parque',
+        titleZh: '公園孩子',
+        icon: '🎠',
+        sentences: [
+            { text: 'Nesta imagem, vejo muitas crianças num parque.', type: 'pt' },
+            { text: '在這張圖裡，我看見公園裡很多小朋友。', type: 'zh' },
+            { text: 'Algumas crianças brincam no balanço.', type: 'pt' },
+            { text: '有些小朋友在盪鞦韆。', type: 'zh' },
+            { text: 'Outras crianças jogam futebol na relva.', type: 'pt' },
+            { text: '有些小朋友在草坪踢足球。', type: 'zh' },
+            { text: 'O tempo está bom e faz sol.', type: 'pt' },
+            { text: '天氣很好、陽光充足。', type: 'zh' },
+            { text: 'Todas as crianças estão muito contentes.', type: 'pt' },
+            { text: '所有小朋友都非常開心。', type: 'zh' }
+        ]
+    }, {
+        id: 'a1_17',
+        title: 'Mulher no Café',
+        titleZh: '咖啡店女士',
+        icon: '☕',
+        sentences: [
+            { text: 'Nesta imagem, vejo uma mulher num café.', type: 'pt' },
+            { text: '在這張圖裡，我看見咖啡廳裡有一位女士。', type: 'zh' },
+            { text: 'São quatro horas da tarde e o tempo está bom.', type: 'pt' },
+            { text: '現在是下午四點，天氣很好。', type: 'zh' },
+            { text: 'Ela bebe café e come um bolo saboroso.', type: 'pt' },
+            { text: '她喝咖啡、吃美味的蛋糕。', type: 'zh' },
+            { text: 'Ela trabalha com o seu computador.', type: 'pt' },
+            { text: '她在用電腦工作。', type: 'zh' },
+            { text: 'A mulher está muito tranquila e feliz.', type: 'pt' },
+            { text: '女士非常放鬆、開心。', type: 'zh' }
+        ]
+    }, {
+        id: 'a1_18',
+        title: 'Casal no Supermercado',
+        titleZh: '超市購物',
+        icon: '🛒',
+        sentences: [
+            { text: 'Nesta imagem, vejo um homem e uma mulher.', type: 'pt' },
+            { text: '在這張圖裡，我看見一位男士和一位女士。', type: 'zh' },
+            { text: 'Eles estão num supermercado de Macau.', type: 'pt' },
+            { text: '他們在澳門的超級市場。', type: 'zh' },
+            { text: 'O homem empurra um carrinho de compras.', type: 'pt' },
+            { text: '男士推著購物車。', type: 'zh' },
+            { text: 'A mulher põe maçãs no carrinho.', type: 'pt' },
+            { text: '女士把蘋果放進購物車。', type: 'zh' },
+            { text: 'Eles estão felizes a fazer compras.', type: 'pt' },
+            { text: '他們開心的買東西。', type: 'zh' }
+        ]
+    }, {
+        id: 'a1_19',
+        title: 'Trotineta Elétrica',
+        titleZh: '電動滑板車',
+        icon: '🛴',
+        sentences: [
+            { text: 'Nesta imagem, vejo um homem na rua da cidade.', type: 'pt' },
+            { text: '在這張圖裡，我看見城市街道上有一位男士。', type: 'zh' },
+            { text: 'Ele anda numa trotineta elétrica.', type: 'pt' },
+            { text: '他正在騎電動滑板車。', type: 'zh' },
+            { text: 'O dia está ensolarado e o tempo é bom.', type: 'pt' },
+            { text: '今日陽光充足、天氣很好。', type: 'zh' },
+            { text: 'Há carros e casas ao fundo da rua.', type: 'pt' },
+            { text: '街道背景有汽車和房子。', type: 'zh' },
+            { text: 'É um meio de transporte rápido.', type: 'pt' },
+            { text: '這是一種很快的交通工具。', type: 'zh' }
+        ]
+    }, {
+        id: 'a1_20',
+        title: 'Robô e Idoso',
+        titleZh: '機器人與老人',
+        icon: '🤖',
+        sentences: [
+            { text: 'Nesta imagem, vejo um senhor idoso e um robô.', type: 'pt' },
+            { text: '在這張圖裡，我看見一位老人和一台機器人。', type: 'zh' },
+            { text: 'Eles estão dentro de uma casa.', type: 'pt' },
+            { text: '他們在一間屋子裡。', type: 'zh' },
+            { text: 'O robô traz uma chávena de água ao senhor.', type: 'pt' },
+            { text: '機器人給老人送一杯水。', type: 'zh' },
+            { text: 'O senhor está sentado e sorri muito.', type: 'pt' },
+            { text: '老人坐著、笑得很開心。', type: 'zh' },
+            { text: 'O robô ajuda as pessoas idosas.', type: 'pt' },
+            { text: '機器人可以幫助老年人。', type: 'zh' }
+        ]
+    }];
+
+    const ARTICLES_A2 = [{
+        id: 'a2_1',
+        title: 'Frigorífico',
+        titleZh: '冰箱',
+        icon: '🧊',
+        sentences: [
+            { text: 'Nesta imagem, vejo um frigorífico aberto.', type: 'pt' },
+            { text: '在這張圖裡，我看到一個打開的冰箱。', type: 'zh' },
+            { text: 'Dentro do frigorífico há muitos alimentos.', type: 'pt' },
+            { text: '冰箱裡面有很多食物。', type: 'zh' },
+            { text: 'Há frutas como maçãs, bananas e laranjas.', type: 'pt' },
+            { text: '有水果，比如蘋果、香蕉和橘子。', type: 'zh' },
+            { text: 'Também há legumes: tomates, alfaces e cenouras.', type: 'pt' },
+            { text: '也有蔬菜：番茄、生菜和紅蘿蔔。', type: 'zh' },
+            { text: 'Na prateleira de cima, está o leite e os ovos.', type: 'pt' },
+            { text: '在上層架子，有牛奶和雞蛋。', type: 'zh' },
+            { text: 'Na porta do frigorífico, há sumo e molhos.', type: 'pt' },
+            { text: '在冰箱門上，有果汁和醬料。', type: 'zh' },
+            { text: 'O frigorífico está cheio e bem organizado.', type: 'pt' },
+            { text: '冰箱很滿而且整理得很好。', type: 'zh' },
+            { text: 'Eu gosto de cozinhar com ingredientes frescos.', type: 'pt' },
+            { text: '我喜歡用新鮮的食材做飯。', type: 'zh' }
+        ]
+    }, {
+        id: 'a2_2',
+        title: 'Cesto de Fruta',
+        titleZh: '水果籃',
+        icon: '🍇',
+        sentences: [
+            { text: 'Nesta imagem, vejo uma mesa de madeira.', type: 'pt' },
+            { text: '在這張圖裡，我看到一張木桌。', type: 'zh' },
+            { text: 'Em cima da mesa, há um cesto cheio de fruta.', type: 'pt' },
+            { text: '在桌子上，有一個裝滿水果的籃子。', type: 'zh' },
+            { text: 'As frutas são muito coloridas.', type: 'pt' },
+            { text: '水果顏色很鮮豔。', type: 'zh' },
+            { text: 'Há uvas verdes e roxas, maçãs vermelhas e peras amarelas.', type: 'pt' },
+            { text: '有綠色和紫色的葡萄、紅色的蘋果和黃色的梨子。', type: 'zh' },
+            { text: 'Também vejo algumas laranjas e um melão.', type: 'pt' },
+            { text: '我也看到一些橘子和一個哈密瓜。', type: 'zh' },
+            { text: 'As frutas parecem frescas e deliciosas.', type: 'pt' },
+            { text: '水果看起來很新鮮又美味。', type: 'zh' },
+            { text: 'Eu costumo comer fruta ao pequeno-almoço.', type: 'pt' },
+            { text: '我通常早餐吃水果。', type: 'zh' },
+            { text: 'A fruta é saudável e faz bem à saúde.', type: 'pt' },
+            { text: '水果很健康，對身體很好。', type: 'zh' }
+        ]
+    }, {
+        id: 'a2_3',
+        title: 'Sala de Estar',
+        titleZh: '客廳擺設',
+        icon: '🛋️',
+        sentences: [
+            { text: 'Nesta imagem, vejo uma sala de estar confortável.', type: 'pt' },
+            { text: '在這張圖裡，我看到一間舒適的客廳。', type: 'zh' },
+            { text: 'Há um sofá grande no centro da sala.', type: 'pt' },
+            { text: '客廳中央有一張大沙發。', type: 'zh' },
+            { text: 'Em frente ao sofá, está a mesa de centro.', type: 'pt' },
+            { text: '沙發前面是茶几。', type: 'zh' },
+            { text: 'Em cima da mesa, há um vaso com flores.', type: 'pt' },
+            { text: '茶几上有一個花瓶，裡面有花。', type: 'zh' },
+            { text: 'Ao lado do sofá, há uma estante com livros.', type: 'pt' },
+            { text: '沙發旁邊有一個書架，上面有書。', type: 'zh' },
+            { text: 'Na parede, está um quadro bonito.', type: 'pt' },
+            { text: '牆上有一幅漂亮的畫。', type: 'zh' },
+            { text: 'A sala tem boa iluminação natural.', type: 'pt' },
+            { text: '客廳有很好的自然光線。', type: 'zh' },
+            { text: 'É um espaço agradável para descansar.', type: 'pt' },
+            { text: '這是一個適合休息的舒適空間。', type: 'zh' }
+        ]
+    }, {
+        id: 'a2_4',
+        title: 'Quarto Arrumado',
+        titleZh: '臥室',
+        icon: '🛏️',
+        sentences: [
+            { text: 'Nesta imagem, vejo um quarto arrumado.', type: 'pt' },
+            { text: '在這張圖裡，我看到一間整齊的臥室。', type: 'zh' },
+            { text: 'A cama está no centro do quarto.', type: 'pt' },
+            { text: '床在臥室中央。', type: 'zh' },
+            { text: 'A roupa de cama é azul e branca.', type: 'pt' },
+            { text: '床單是藍色和白色的。', type: 'zh' },
+            { text: 'Ao lado da cama, há uma mesa de cabeceira.', type: 'pt' },
+            { text: '床旁邊有一個床頭櫃。', type: 'zh' },
+            { text: 'Em cima da mesa, está um candeeiro.', type: 'pt' },
+            { text: '床頭櫃上有一盞檯燈。', type: 'zh' },
+            { text: 'Também vejo uma secretária perto da janela.', type: 'pt' },
+            { text: '我也看到窗戶旁邊有一張書桌。', type: 'zh' },
+            { text: 'O quarto é tranquilo e acolhedor.', type: 'pt' },
+            { text: '臥室很安靜又溫馨。', type: 'zh' }
+        ]
+    }, {
+        id: 'a2_5',
+        title: 'Varanda com Plantas',
+        titleZh: '陽台植物',
+        icon: '🌿',
+        sentences: [
+            { text: 'Nesta imagem, vejo uma varanda com muitas plantas.', type: 'pt' },
+            { text: '在這張圖裡，我看到一個有許多植物的陽台。', type: 'zh' },
+            { text: 'Há vasos grandes e pequenos.', type: 'pt' },
+            { text: '有大大小小的花盆。', type: 'zh' },
+            { text: 'As plantas são verdes e saudáveis.', type: 'pt' },
+            { text: '植物是綠色的，很健康。', type: 'zh' },
+            { text: 'Vejo flores de várias cores: vermelhas, amarelas e roxas.', type: 'pt' },
+            { text: '我看到各種顏色的花：紅色、黃色和紫色。', type: 'zh' },
+            { text: 'Ao fundo, vejo a paisagem da cidade.', type: 'pt' },
+            { text: '在遠處，我看到城市風景。', type: 'zh' },
+            { text: 'O sol está a brilhar e o dia está bonito.', type: 'pt' },
+            { text: '陽光明媚，天氣很好。', type: 'zh' },
+            { text: 'Gosto de cuidar das plantas no meu tempo livre.', type: 'pt' },
+            { text: '我喜歡在空閒時間照顧植物。', type: 'zh' },
+            { text: 'As plantas trazem vida e cor à casa.', type: 'pt' },
+            { text: '植物為家裡帶來生機和色彩。', type: 'zh' }
+        ]
+    }, {
+        id: 'a2_6',
+        title: 'Cozinha Moderna',
+        titleZh: '廚房做飯',
+        icon: '🍳',
+        sentences: [
+            { text: 'Nesta imagem, vejo uma cozinha moderna.', type: 'pt' },
+            { text: '在這張圖裡，我看到一間現代廚房。', type: 'zh' },
+            { text: 'Uma mulher está a cozinhar ao fogão.', type: 'pt' },
+            { text: '一位女士正在爐灶前做飯。', type: 'zh' },
+            { text: 'Ela está a preparar sopa de legumes.', type: 'pt' },
+            { text: '她正在準備蔬菜湯。', type: 'zh' },
+            { text: 'Em cima da bancada, há legumes cortados.', type: 'pt' },
+            { text: '在檯面上，有切好的蔬菜。', type: 'zh' },
+            { text: 'Também vejo uma panela grande com água a ferver.', type: 'pt' },
+            { text: '我也看到一個大鍋子，水在沸騰。', type: 'zh' },
+            { text: 'Ao lado, está o frigorífico e o micro-ondas.', type: 'pt' },
+            { text: '旁邊有冰箱和微波爐。', type: 'zh' },
+            { text: 'A cozinha está limpa e organizada.', type: 'pt' },
+            { text: '廚房乾淨又整齊。', type: 'zh' },
+            { text: 'Eu gosto de cozinhar para a minha família.', type: 'pt' },
+            { text: '我喜歡為我的家人做飯。', type: 'zh' }
+        ]
+    }, {
+        id: 'a2_7',
+        title: 'Jardim',
+        titleZh: '花園',
+        icon: '🌺',
+        sentences: [
+            { text: 'Nesta imagem, vejo um jardim bonito.', type: 'pt' },
+            { text: '在這張圖裡，我看到一個漂亮的花園。', type: 'zh' },
+            { text: 'Há muitas flores de cores diferentes.', type: 'pt' },
+            { text: '有很多不同顏色的花。', type: 'zh' },
+            { text: 'Também vejo uma árvore grande com sombra.', type: 'pt' },
+            { text: '我也看到一棵大樹，有樹蔭。', type: 'zh' },
+            { text: 'A relva está verde e bem cortada.', type: 'pt' },
+            { text: '草坪是綠色的，修剪得很好。', type: 'zh' },
+            { text: 'Há uma mesa e cadeiras de jardim.', type: 'pt' },
+            { text: '有一張花園桌子和幾把椅子。', type: 'zh' },
+            { text: 'As pessoas estão a relaxar no jardim.', type: 'pt' },
+            { text: '人們正在花園裡放鬆。', type: 'zh' },
+            { text: 'É um lugar perfeito para passar o tempo.', type: 'pt' },
+            { text: '這是一個度過時光的完美地方。', type: 'zh' },
+            { text: 'Eu adoro passar tempo ao ar livre.', type: 'pt' },
+            { text: '我喜歡在戶外度過時間。', type: 'zh' }
+        ]
+    }, {
+        id: 'a2_8',
+        title: 'Supermercado',
+        titleZh: '超市購物',
+        icon: '🛒',
+        sentences: [
+            { text: 'Nesta imagem, vejo um supermercado movimentado.', type: 'pt' },
+            { text: '在這張圖裡，我看到一個熱鬧的超級市場。', type: 'zh' },
+            { text: 'Há muitas pessoas a fazer compras.', type: 'pt' },
+            { text: '有很多人在購物。', type: 'zh' },
+            { text: 'Um homem está a olhar para a lista de compras.', type: 'pt' },
+            { text: '一位男士正在看購物清單。', type: 'zh' },
+            { text: 'Uma mulher está a escolher fruta.', type: 'pt' },
+            { text: '一位女士正在挑選水果。', type: 'zh' },
+            { text: 'Os corredores estão cheios de produtos.', type: 'pt' },
+            { text: '走道上擺滿了商品。', type: 'zh' },
+            { text: 'As pessoas usam carrinhos de compras.', type: 'pt' },
+            { text: '人們使用購物車。', type: 'zh' },
+            { text: 'Eu vou ao supermercado todas as semanas.', type: 'pt' },
+            { text: '我每個星期都會去超市。', type: 'zh' }
+        ]
+    }, {
+        id: 'a2_9',
+        title: 'Parque',
+        titleZh: '公園',
+        icon: '🌳',
+        sentences: [
+            { text: 'Nesta imagem, vejo um parque cheio de vida.', type: 'pt' },
+            { text: '在這張圖裡，我看到一個充滿生氣的公園。', type: 'zh' },
+            { text: 'Há famílias, crianças e idosos no parque.', type: 'pt' },
+            { text: '公園裡有家庭、小孩和長者。', type: 'zh' },
+            { text: 'As crianças estão a brincar no balanço.', type: 'pt' },
+            { text: '小孩們在盪鞦韆。', type: 'zh' },
+            { text: 'Algumas pessoas estão a fazer piquenique.', type: 'pt' },
+            { text: '有些人在野餐。', type: 'zh' },
+            { text: 'Os cães correm livremente na relva.', type: 'pt' },
+            { text: '狗在草坪上自由奔跑。', type: 'zh' },
+            { text: 'O sol está a brilhar e o tempo está agradável.', type: 'pt' },
+            { text: '陽光普照，天氣很舒服。', type: 'zh' },
+            { text: 'Gosto de passear no parque ao fim da tarde.', type: 'pt' },
+            { text: '我喜歡在傍晚時分在公園散步。', type: 'zh' }
+        ]
+    }, {
+        id: 'a2_10',
+        title: 'Escritório',
+        titleZh: '辦公室',
+        icon: '🏢',
+        sentences: [
+            { text: 'Nesta imagem, vejo um escritório moderno.', type: 'pt' },
+            { text: '在這張圖裡，我看到一間現代辦公室。', type: 'zh' },
+            { text: 'Há várias secretárias com computadores.', type: 'pt' },
+            { text: '有好幾張辦公桌，上面有電腦。', type: 'zh' },
+            { text: 'Os trabalhadores estão concentrados no trabalho.', type: 'pt' },
+            { text: '員工們專注於工作。', type: 'zh' },
+            { text: 'Alguns estão a usar auscultadores.', type: 'pt' },
+            { text: '有些人戴著耳機。', type: 'zh' },
+            { text: 'No fundo, há uma sala de reuniões.', type: 'pt' },
+            { text: '後面有一間會議室。', type: 'zh' },
+            { text: 'O escritório é luminoso e espaçoso.', type: 'pt' },
+            { text: '辦公室明亮又寬敞。', type: 'zh' },
+            { text: 'O ambiente de trabalho parece agradável.', type: 'pt' },
+            { text: '工作環境看起來很舒適。', type: 'zh' }
+        ]
+    }, {
+        id: 'a2_11',
+        title: 'Praia',
+        titleZh: '海灘',
+        icon: '🏖️',
+        sentences: [
+            { text: 'Nesta imagem, vejo uma praia linda.', type: 'pt' },
+            { text: '在這張圖裡，我看到一個美麗的海灘。', type: 'zh' },
+            { text: 'A areia é branca e o mar é azul.', type: 'pt' },
+            { text: '沙灘是白色的，大海是藍色的。', type: 'zh' },
+            { text: 'Há muitas pessoas a tomar banho de sol.', type: 'pt' },
+            { text: '有很多人在曬太陽。', type: 'zh' },
+            { text: 'Algumas pessoas estão a nadar no mar.', type: 'pt' },
+            { text: '有些人在海裡游泳。', type: 'zh' },
+            { text: 'As crianças fazem castelos de areia.', type: 'pt' },
+            { text: '小朋友們在蓋沙堡。', type: 'zh' },
+            { text: 'No céu, vejo gaivotas a voar.', type: 'pt' },
+            { text: '天空中，我看到海鷗在飛翔。', type: 'zh' },
+            { text: 'Eu adoro ir à praia no verão.', type: 'pt' },
+            { text: '我喜歡夏天去海灘。', type: 'zh' }
+        ]
+    }, {
+        id: 'a2_12',
+        title: 'Café',
+        titleZh: '咖啡廳',
+        icon: '☕',
+        sentences: [
+            { text: 'Nesta imagem, vejo um café aconchegante.', type: 'pt' },
+            { text: '在這張圖裡，我看到一間溫馨的咖啡廳。', type: 'zh' },
+            { text: 'Há mesas pequenas e cadeiras confortáveis.', type: 'pt' },
+            { text: '有小桌子和舒適的椅子。', type: 'zh' },
+            { text: 'Algumas pessoas estão a beber café.', type: 'pt' },
+            { text: '有些人在喝咖啡。', type: 'zh' },
+            { text: 'Outras pessoas estão a trabalhar no computador.', type: 'pt' },
+            { text: '其他人在用電腦工作。', type: 'zh' },
+            { text: 'Na montra, vejo bolos e pastéis deliciosos.', type: 'pt' },
+            { text: '在櫥窗裡，我看到美味的蛋糕和糕點。', type: 'zh' },
+            { text: 'O aroma do café é muito agradável.', type: 'pt' },
+            { text: '咖啡的香氣非常怡人。', type: 'zh' },
+            { text: 'Eu gosto de ir ao café com os meus amigos.', type: 'pt' },
+            { text: '我喜歡和朋友去咖啡廳。', type: 'zh' }
+        ]
+    }, {
+        id: 'a2_13',
+        title: 'Biblioteca',
+        titleZh: '圖書館',
+        icon: '📚',
+        sentences: [
+            { text: 'Nesta imagem, vejo uma biblioteca grande.', type: 'pt' },
+            { text: '在這張圖裡，我看到一間大圖書館。', type: 'zh' },
+            { text: 'Há muitas estantes cheias de livros.', type: 'pt' },
+            { text: '有很多書架，上面放滿了書。', type: 'zh' },
+            { text: 'As pessoas estão a ler em silêncio.', type: 'pt' },
+            { text: '人們正在安靜地閱讀。', type: 'zh' },
+            { text: 'Algumas pessoas estão a estudar.', type: 'pt' },
+            { text: '有些人在學習。', type: 'zh' },
+            { text: 'As mesas estão cheias de livros e cadernos.', type: 'pt' },
+            { text: '桌上放滿了書和筆記本。', type: 'zh' },
+            { text: 'A biblioteca é um lugar calmo e tranquilo.', type: 'pt' },
+            { text: '圖書館是一個安靜、平靜的地方。', type: 'zh' },
+            { text: 'Eu gosto de ler livros na biblioteca.', type: 'pt' },
+            { text: '我喜歡在圖書館看書。', type: 'zh' }
+        ]
+    }, {
+        id: 'a2_14',
+        title: 'Mercado de Rua',
+        titleZh: '街頭市場',
+        icon: '🛍️',
+        sentences: [
+            { text: 'Nesta imagem, vejo um mercado de rua animado.', type: 'pt' },
+            { text: '在這張圖裡，我看到一個熱鬧的街頭市場。', type: 'zh' },
+            { text: 'Há muitas bancas com frutas e legumes.', type: 'pt' },
+            { text: '有很多賣水果和蔬菜的攤位。', type: 'zh' },
+            { text: 'Os vendedores estão a chamar os clientes.', type: 'pt' },
+            { text: '攤販們正在招呼客人。', type: 'zh' },
+            { text: 'As pessoas estão a comprar produtos frescos.', type: 'pt' },
+            { text: '人們正在購買新鮮產品。', type: 'zh' },
+            { text: 'Também vejo peixe, carne e pão.', type: 'pt' },
+            { text: '我也看到魚、肉和麵包。', type: 'zh' },
+            { text: 'O mercado é muito colorido e cheio de vida.', type: 'pt' },
+            { text: '市場色彩繽紛，充滿活力。', type: 'zh' },
+            { text: 'Eu gosto de ir ao mercado comprar legumes frescos.', type: 'pt' },
+            { text: '我喜歡去市場買新鮮蔬菜。', type: 'zh' }
+        ]
+    }, {
+        id: 'a2_15',
+        title: 'Ginásio',
+        titleZh: '健身房',
+        icon: '💪',
+        sentences: [
+            { text: 'Nesta imagem, vejo um ginásio moderno.', type: 'pt' },
+            { text: '在這張圖裡，我看到一間現代健身房。', type: 'zh' },
+            { text: 'Há muitas máquinas de exercício.', type: 'pt' },
+            { text: '有很多健身器材。', type: 'zh' },
+            { text: 'Algumas pessoas estão a correr nas passadeiras.', type: 'pt' },
+            { text: '有些人在跑步機上跑步。', type: 'zh' },
+            { text: 'Outras estão a levantar pesos.', type: 'pt' },
+            { text: '其他人在舉重。', type: 'zh' },
+            { text: 'O ginásio está bem iluminado.', type: 'pt' },
+            { text: '健身房光線充足。', type: 'zh' },
+            { text: 'As pessoas estão a fazer exercício para manter a saúde.', type: 'pt' },
+            { text: '人們正在運動以保持健康。', type: 'zh' },
+            { text: 'Eu costumo ir ao ginásio três vezes por semana.', type: 'pt' },
+            { text: '我通常每週去健身房三次。', type: 'zh' }
+        ]
+    }, {
+        id: 'a2_16',
+        title: 'Estação de Comboios',
+        titleZh: '火車站',
+        icon: '🚂',
+        sentences: [
+            { text: 'Nesta imagem, vejo uma estação de comboios movimentada.', type: 'pt' },
+            { text: '在這張圖裡，我看到一個繁忙的火車站。', type: 'zh' },
+            { text: 'As pessoas estão à espera do comboio.', type: 'pt' },
+            { text: '人們正在等火車。', type: 'zh' },
+            { text: 'Há um ecrã grande com os horários.', type: 'pt' },
+            { text: '有一個大螢幕顯示時刻表。', type: 'zh' },
+            { text: 'Algumas pessoas estão a viajar com malas grandes.', type: 'pt' },
+            { text: '有些人帶著大行李箱旅行。', type: 'zh' },
+            { text: 'Um homem está a olhar para o telemóvel.', type: 'pt' },
+            { text: '一位男士正在看手機。', type: 'zh' },
+            { text: 'Uma mulher está a beber café enquanto espera.', type: 'pt' },
+            { text: '一位女士邊等邊喝咖啡。', type: 'zh' },
+            { text: 'O comboio chega à plataforma número 4.', type: 'pt' },
+            { text: '火車抵達第4號月台。', type: 'zh' },
+            { text: 'Eu gosto de viajar de comboio para outras cidades.', type: 'pt' },
+            { text: '我喜歡搭火車去其他城市。', type: 'zh' }
+        ]
+    }, {
+        id: 'a2_17',
+        title: 'Restaurante',
+        titleZh: '餐廳',
+        icon: '🍝',
+        sentences: [
+            { text: 'Nesta imagem, vejo um restaurante italiano.', type: 'pt' },
+            { text: '在這張圖裡，我看到一間義大利餐廳。', type: 'zh' },
+            { text: 'Há mesas com toalhas vermelhas e brancas.', type: 'pt' },
+            { text: '有鋪著紅白桌巾的桌子。', type: 'zh' },
+            { text: 'O cliente está a ler o menu.', type: 'pt' },
+            { text: '顧客正在看菜單。', type: 'zh' },
+            { text: 'O empregado está a anotar o pedido.', type: 'pt' },
+            { text: '服務生正在記下點餐。', type: 'zh' },
+            { text: 'Na mesa, há pão, azeite e vinagre.', type: 'pt' },
+            { text: '桌上有麵包、橄欖油和醋。', type: 'zh' },
+            { text: 'Ao fundo, vejo a cozinha do restaurante.', type: 'pt' },
+            { text: '在後面，我看到餐廳的廚房。', type: 'zh' },
+            { text: 'Eu gosto de comer pizza e massa italiana.', type: 'pt' },
+            { text: '我喜歡吃義大利披薩和義大利麵。', type: 'zh' }
+        ]
+    }, {
+        id: 'a2_18',
+        title: 'Festa de Aniversário',
+        titleZh: '生日派對',
+        icon: '🎂',
+        sentences: [
+            { text: 'Nesta imagem, vejo uma festa de aniversário.', type: 'pt' },
+            { text: '在這張圖裡，我看到一個生日派對。', type: 'zh' },
+            { text: 'Há um bolo grande com velas acesas.', type: 'pt' },
+            { text: '有一個大蛋糕，上面插著點燃的蠟燭。', type: 'zh' },
+            { text: 'As pessoas estão a cantar os parabéns.', type: 'pt' },
+            { text: '人們正在唱生日快樂歌。', type: 'zh' },
+            { text: 'O aniversariante está a sorrir e a fazer um desejo.', type: 'pt' },
+            { text: '壽星正在微笑並許願。', type: 'zh' },
+            { text: 'Há muitos balões coloridos na sala.', type: 'pt' },
+            { text: '房間裡有很多彩色氣球。', type: 'zh' },
+            { text: 'Na mesa, há doces, salgados e refrigerantes.', type: 'pt' },
+            { text: '桌上有甜點、鹹點心和飲料。', type: 'zh' },
+            { text: 'Eu gosto de festas de aniversário com amigos e família.', type: 'pt' },
+            { text: '我喜歡和朋友家人一起過生日派對。', type: 'zh' }
+        ]
+    }, {
+        id: 'a2_19',
+        title: 'Hospital',
+        titleZh: '醫院候診室',
+        icon: '🏥',
+        sentences: [
+            { text: 'Nesta imagem, vejo uma sala de espera de um hospital.', type: 'pt' },
+            { text: '在這張圖裡，我看到一間醫院的候診室。', type: 'zh' },
+            { text: 'Há muitas cadeiras para os pacientes.', type: 'pt' },
+            { text: '有很多給病人的椅子。', type: 'zh' },
+            { text: 'Algumas pessoas estão a ler revistas.', type: 'pt' },
+            { text: '有些人在看雜誌。', type: 'zh' },
+            { text: 'Outras estão a olhar para o telemóvel.', type: 'pt' },
+            { text: '其他人在看手機。', type: 'zh' },
+            { text: 'Há um ecrã que mostra o número da senha.', type: 'pt' },
+            { text: '有一個螢幕顯示號碼牌。', type: 'zh' },
+            { text: 'A sala está calma e limpa.', type: 'pt' },
+            { text: '候診室安靜又乾淨。', type: 'zh' },
+            { text: 'Eu não gosto de ir ao hospital, mas é importante cuidar da saúde.', type: 'pt' },
+            { text: '我不喜歡去醫院，但照顧健康很重要。', type: 'zh' }
+        ]
+    }, {
+        id: 'a2_20',
+        title: 'Aeroporto',
+        titleZh: '機場',
+        icon: '✈️',
+        sentences: [
+            { text: 'Nesta imagem, vejo um aeroporto internacional.', type: 'pt' },
+            { text: '在這張圖裡，我看到一個國際機場。', type: 'zh' },
+            { text: 'Há muitas pessoas com malas e mochilas.', type: 'pt' },
+            { text: '有很多人帶著行李箱和背包。', type: 'zh' },
+            { text: 'Os passageiros estão a fazer o check-in.', type: 'pt' },
+            { text: '旅客們正在辦理登機手續。', type: 'zh' },
+            { text: 'Há um ecrã com os voos e as portas de embarque.', type: 'pt' },
+            { text: '有一個螢幕顯示航班和登機門。', type: 'zh' },
+            { text: 'Algumas pessoas estão a esperar no café.', type: 'pt' },
+            { text: '有些人在咖啡廳等待。', type: 'zh' },
+            { text: 'Os funcionários estão a ajudar os passageiros.', type: 'pt' },
+            { text: '工作人員正在協助旅客。', type: 'zh' },
+            { text: 'Eu gosto de viajar de avião para outros países.', type: 'pt' },
+            { text: '我喜歡搭飛機去其他國家。', type: 'zh' }
+        ]
+    }, {
+        id: 'a2_21',
+        title: 'Farmácia',
+        titleZh: '藥局',
+        icon: '💊',
+        sentences: [
+            { text: 'Nesta imagem, vejo uma farmácia bem organizada.', type: 'pt' },
+            { text: '在這張圖裡，我看到一間整齊的藥局。', type: 'zh' },
+            { text: 'As prateleiras estão cheias de medicamentos.', type: 'pt' },
+            { text: '架子上擺滿了藥品。', type: 'zh' },
+            { text: 'Há também produtos de higiene e cosméticos.', type: 'pt' },
+            { text: '也有衛生用品和化妝品。', type: 'zh' },
+            { text: 'O farmacêutico está a atender um cliente.', type: 'pt' },
+            { text: '藥劑師正在服務一位顧客。', type: 'zh' },
+            { text: 'A cliente está a pedir um medicamento para a tosse.', type: 'pt' },
+            { text: '顧客正在購買咳嗽藥。', type: 'zh' },
+            { text: 'A farmácia está limpa e bem iluminada.', type: 'pt' },
+            { text: '藥局乾淨且明亮。', type: 'zh' },
+            { text: 'Eu vou à farmácia quando preciso de medicamentos.', type: 'pt' },
+            { text: '我需要藥品時會去藥局。', type: 'zh' }
+        ]
+    }, {
+        id: 'a2_22',
+        title: 'Rua Movimentada',
+        titleZh: '熱鬧街道',
+        icon: '🚶',
+        sentences: [
+            { text: 'Nesta imagem, vejo uma rua movimentada da cidade.', type: 'pt' },
+            { text: '在這張圖裡，我看到一條熱鬧的城市街道。', type: 'zh' },
+            { text: 'Há muitas pessoas a andar a pé.', type: 'pt' },
+            { text: '有很多行人在走路。', type: 'zh' },
+            { text: 'Algumas pessoas estão a usar guarda-chuva.', type: 'pt' },
+            { text: '有些人撐著雨傘。', type: 'zh' },
+            { text: 'Há carros e autocarros na estrada.', type: 'pt' },
+            { text: '路上有汽車和公車。', type: 'zh' },
+            { text: 'Os prédios são altos e modernos.', type: 'pt' },
+            { text: '建築物高大又現代。', type: 'zh' },
+            { text: 'As lojas estão cheias de clientes.', type: 'pt' },
+            { text: '商店裡有很多顧客。', type: 'zh' },
+            { text: 'Eu gosto de andar a pé no centro da cidade.', type: 'pt' },
+            { text: '我喜歡在市中心散步。', type: 'zh' }
+        ]
+    }, {
+        id: 'a2_23',
+        title: 'Quarto Desarrumado',
+        titleZh: '凌亂房間',
+        icon: '🧹',
+        sentences: [
+            { text: 'Nesta imagem, vejo um quarto muito desarrumado.', type: 'pt' },
+            { text: '在這張圖裡，我看到一個很凌亂的房間。', type: 'zh' },
+            { text: 'A cama não está feita.', type: 'pt' },
+            { text: '床沒有整理。', type: 'zh' },
+            { text: 'Há roupas espalhadas no chão.', type: 'pt' },
+            { text: '地板上散落著衣服。', type: 'zh' },
+            { text: 'A secretária está cheia de livros e papéis.', type: 'pt' },
+            { text: '書桌上堆滿了書和紙。', type: 'zh' },
+            { text: 'Há copos e pratos sujos em cima da mesa.', type: 'pt' },
+            { text: '桌上有髒杯子和盤子。', type: 'zh' },
+            { text: 'A cadeira está cheia de roupa.', type: 'pt' },
+            { text: '椅子上堆滿了衣服。', type: 'zh' },
+            { text: 'O quarto precisa de ser arrumado.', type: 'pt' },
+            { text: '房間需要整理了。', type: 'zh' },
+            { text: 'Eu não gosto de ter o quarto desarrumado.', type: 'pt' },
+            { text: '我不喜歡房間亂七八糟。', type: 'zh' }
+        ]
+    }, {
+        id: 'a2_24',
+        title: 'Lavar Roupa',
+        titleZh: '洗衣服',
+        icon: '🧺',
+        sentences: [
+            { text: 'Nesta imagem, vejo uma máquina de lavar roupa.', type: 'pt' },
+            { text: '在這張圖裡，我看到一台洗衣機。', type: 'zh' },
+            { text: 'Há uma cesta cheia de roupa suja.', type: 'pt' },
+            { text: '有一個裝滿髒衣服的籃子。', type: 'zh' },
+            { text: 'Uma pessoa está a colocar a roupa na máquina.', type: 'pt' },
+            { text: '一個人正在把衣服放進洗衣機。', type: 'zh' },
+            { text: 'Ao lado, há um secador de roupa.', type: 'pt' },
+            { text: '旁邊有一台烘乾機。', type: 'zh' },
+            { text: 'A máquina está a fazer um barulho suave.', type: 'pt' },
+            { text: '洗衣機發出輕微的運轉聲。', type: 'zh' },
+            { text: 'Depois de lavar, a roupa fica limpa e cheirosa.', type: 'pt' },
+            { text: '洗完之後，衣服變得乾淨又香。', type: 'zh' },
+            { text: 'Eu costumo lavar a roupa aos fins de semana.', type: 'pt' },
+            { text: '我通常週末洗衣服。', type: 'zh' },
+            { text: 'Gosto de roupa lavada e passada a ferro.', type: 'pt' },
+            { text: '我喜歡乾淨、燙好的衣服。', type: 'zh' }
+        ]
+    }, {
+        id: 'a2_25',
+        title: 'Dia de Chuva',
+        titleZh: '下雨天',
+        icon: '🌧️',
+        sentences: [
+            { text: 'Nesta imagem, vejo um dia de chuva.', type: 'pt' },
+            { text: '在這張圖裡，我看到一個下雨天。', type: 'zh' },
+            { text: 'O céu está cinzento e nublado.', type: 'pt' },
+            { text: '天空灰濛濛的，陰雲密布。', type: 'zh' },
+            { text: 'A chuva está a cair na janela.', type: 'pt' },
+            { text: '雨正在窗戶上落下。', type: 'zh' },
+            { text: 'Há poças de água no chão.', type: 'pt' },
+            { text: '地上有水坑。', type: 'zh' },
+            { text: 'As pessoas estão a usar guarda-chuvas e capas de chuva.', type: 'pt' },
+            { text: '人們撐著雨傘、穿著雨衣。', type: 'zh' },
+            { text: 'Os carros estão a andar devagar na estrada.', type: 'pt' },
+            { text: '汽車在路上開得很慢。', type: 'zh' },
+            { text: 'O som da chuva é calmo e relaxante.', type: 'pt' },
+            { text: '雨聲平靜又令人放鬆。', type: 'zh' },
+            { text: 'Eu gosto de ficar em casa em dias de chuva.', type: 'pt' },
+            { text: '我喜歡在下雨天待在家裡。', type: 'zh' }
+        ]
+    }, {
+        id: 'a2_26',
+        title: 'Escritório em Casa',
+        titleZh: '家庭辦公室',
+        icon: '🏠',
+        sentences: [
+            { text: 'Nesta imagem, vejo um escritório em casa.', type: 'pt' },
+            { text: '在這張圖裡，我看到一間家庭辦公室。', type: 'zh' },
+            { text: 'Há uma secretária grande com um computador.', type: 'pt' },
+            { text: '有一張大書桌，上面有電腦。', type: 'zh' },
+            { text: 'Ao lado, há uma estante cheia de livros.', type: 'pt' },
+            { text: '旁邊有一個裝滿書的書架。', type: 'zh' },
+            { text: 'Há uma cadeira confortável para trabalhar.', type: 'pt' },
+            { text: '有一張舒適的工作椅。', type: 'zh' },
+            { text: 'Na parede, há um quadro branco.', type: 'pt' },
+            { text: '牆上有一塊白板。', type: 'zh' },
+            { text: 'A luz natural entra pela janela.', type: 'pt' },
+            { text: '自然光從窗戶照進來。', type: 'zh' },
+            { text: 'O escritório é organizado e funcional.', type: 'pt' },
+            { text: '書房整齊又實用。', type: 'zh' },
+            { text: 'Eu gosto de trabalhar em casa tranquilamente.', type: 'pt' },
+            { text: '我喜歡在家安靜地工作。', type: 'zh' }
+        ]
+    }, {
+        id: 'a2_27',
+        title: 'Vizinhos',
+        titleZh: '鄰居',
+        icon: '👋',
+        sentences: [
+            { text: 'Nesta imagem, vejo dois vizinhos a conversar.', type: 'pt' },
+            { text: '在這張圖裡，我看到兩個鄰居在聊天。', type: 'zh' },
+            { text: 'Eles estão na entrada do prédio.', type: 'pt' },
+            { text: '他們在大樓入口處。', type: 'zh' },
+            { text: 'A mulher está a levar o lixo para fora.', type: 'pt' },
+            { text: '女士正要把垃圾拿出去。', type: 'zh' },
+            { text: 'O homem está a passear o seu cão.', type: 'pt' },
+            { text: '男士正在遛他的狗。', type: 'zh' },
+            { text: 'Eles cumprimentam-se com um sorriso.', type: 'pt' },
+            { text: '他們微笑著互相打招呼。', type: 'zh' },
+            { text: 'Os vizinhos têm uma boa relação.', type: 'pt' },
+            { text: '鄰居們關係很好。', type: 'zh' },
+            { text: 'Eu conheço alguns vizinhos do meu prédio.', type: 'pt' },
+            { text: '我認識我大樓裡的幾個鄰居。', type: 'zh' }
+        ]
+    }, {
+        id: 'a2_28',
+        title: 'Ginásio',
+        titleZh: '健身房',
+        icon: '💪',
+        sentences: [
+            { text: 'Nesta imagem, vejo um ginásio moderno.', type: 'pt' },
+            { text: '在這張圖裡，我看到一間現代健身房。', type: 'zh' },
+            { text: 'Há muitas máquinas de exercício.', type: 'pt' },
+            { text: '有很多健身器材。', type: 'zh' },
+            { text: 'Algumas pessoas estão a correr nas passadeiras.', type: 'pt' },
+            { text: '有些人在跑步機上跑步。', type: 'zh' },
+            { text: 'Outras estão a levantar pesos.', type: 'pt' },
+            { text: '其他人在舉重。', type: 'zh' },
+            { text: 'O ginásio está bem iluminado.', type: 'pt' },
+            { text: '健身房光線充足。', type: 'zh' },
+            { text: 'As pessoas estão a fazer exercício para manter a saúde.', type: 'pt' },
+            { text: '人們正在運動以保持健康。', type: 'zh' },
+            { text: 'Eu costumo ir ao ginásio três vezes por semana.', type: 'pt' },
+            { text: '我通常每週去健身房三次。', type: 'zh' }
+        ]
+    }, {
+        id: 'a2_29',
+        title: 'Trabalho em Casa',
+        titleZh: '在家工作',
+        icon: '💻',
+        sentences: [
+            { text: 'Nesta imagem, vejo uma pessoa a trabalhar em casa.', type: 'pt' },
+            { text: '在這張圖裡，我看到一個人在家工作。', type: 'zh' },
+            { text: 'Ela está sentada à secretária com o computador.', type: 'pt' },
+            { text: '她坐在書桌前，用著電腦。', type: 'zh' },
+            { text: 'Ela parece concentrada e profissional.', type: 'pt' },
+            { text: '她看起來專注且專業。', type: 'zh' },
+            { text: 'Ao lado, há uma caneca de café e um caderno.', type: 'pt' },
+            { text: '旁邊有一杯咖啡和一本筆記本。', type: 'zh' },
+            { text: 'A sala está calma e silenciosa.', type: 'pt' },
+            { text: '客廳很安靜。', type: 'zh' },
+            { text: 'Ela pode fazer pausas quando precisa.', type: 'pt' },
+            { text: '她可以在需要時休息。', type: 'zh' },
+            { text: 'Eu gosto de trabalhar em casa, porque é confortável.', type: 'pt' },
+            { text: '我喜歡在家工作，因為很舒服。', type: 'zh' }
+        ]
+    }, {
+        id: 'a2_30',
+        title: 'Cão em Casa',
+        titleZh: '家裡有寵物',
+        icon: '🐕',
+        sentences: [
+            { text: 'Nesta imagem, vejo um cão dentro de casa.', type: 'pt' },
+            { text: '在這張圖裡，我看到家裡有一隻狗。', type: 'zh' },
+            { text: 'O cão está deitado no sofá.', type: 'pt' },
+            { text: '狗狗躺在沙發上。', type: 'zh' },
+            { text: 'Ele parece muito feliz e calmo.', type: 'pt' },
+            { text: '牠看起來很開心又平靜。', type: 'zh' },
+            { text: 'Ao lado do cão, há uma bola e um brinquedo.', type: 'pt' },
+            { text: '狗狗旁邊有一顆球和一個玩具。', type: 'zh' },
+            { text: 'A sala está arrumada e acolhedora.', type: 'pt' },
+            { text: '客廳整齊又溫馨。', type: 'zh' },
+            { text: 'Ter um cão em casa dá muita alegria.', type: 'pt' },
+            { text: '家裡養狗帶來很多快樂。', type: 'zh' },
+            { text: 'Eu gosto de brincar com o meu cão.', type: 'pt' },
+            { text: '我喜歡和我的狗狗玩耍。', type: 'zh' },
+            { text: 'Os animais de estimação são bons companheiros.', type: 'pt' },
+            { text: '寵物是很好的夥伴。', type: 'zh' }
+        ]
+    }];
 
     const ALL_ARTICLES = { a1: ARTICLES_A1, a2: ARTICLES_A2 };
 
@@ -806,7 +1624,7 @@
     }
 
     // ================================================================
-    // 7. 跟讀文章渲染 (精簡版)
+    // 7. 跟讀文章渲染
     // ================================================================
 
     function renderTabs() {
@@ -960,7 +1778,7 @@
     }
 
     // ================================================================
-    // 8. 播放邏輯 (精簡)
+    // 8. 播放邏輯
     // ================================================================
 
     function playSingleSentence(index) {
@@ -1106,7 +1924,7 @@
     }
 
     // ================================================================
-    // 10. 錄音功能 (通用)
+    // 10. 錄音功能
     // ================================================================
 
     function toggleRecording(btn, key, index) {
@@ -1288,7 +2106,7 @@
     }
 
     // ================================================================
-    // 12. AI 看圖造句功能 (核心)
+    // 12. AI 看圖造句功能
     // ================================================================
 
     let currentImageBase64 = null;
@@ -1334,13 +2152,59 @@
         resultArea.innerHTML = '<div style="text-align:center;padding:20px;color:#6b7a8a;">⏳ AI 正在生成句子...</div>';
 
         try {
-            // 根據等級生成提示詞
             const prompts = {
-                'A1': '請根據以下圖片描述，生成 5-8 句簡單的葡語句子（A1 等級）。每句葡語後面必須緊接中文翻譯。格式：葡語句子1\\n中文翻譯1\\n葡語句子2\\n中文翻譯2\\n... 使用基礎詞彙，句子簡短。只輸出句子，不要有其他說明文字。圖片描述：這是一張包含自然風景和建築物的圖片。',
-                'A2': '請根據以下圖片描述，生成 5-8 句葡語句子（A2 等級）。每句葡語後面必須緊接中文翻譯。格式：葡語句子1\\n中文翻譯1\\n葡語句子2\\n中文翻譯2\\n... 使用日常詞彙。只輸出句子，不要有其他說明文字。圖片描述：這是一張包含自然風景和建築物的圖片。',
-                'B1': '請根據以下圖片描述，生成一篇約 150 字的葡語文章（B1 等級）。內容需包含：描述圖片 + 表達個人觀點。使用連接詞。每句葡語後面必須緊接中文翻譯。格式：葡語句子1\\n中文翻譯1\\n葡語句子2\\n中文翻譯2\\n... 只輸出句子，不要有其他說明文字。圖片描述：這是一張包含自然風景和建築物的圖片。',
-                'B2': '請根據以下圖片描述，生成一篇約 150 字的葡語文章（B2 等級）。內容需包含：描述圖片 + 表達觀點 + 分析批評。每句葡語後面必須緊接中文翻譯。格式：葡語句子1\\n中文翻譯1\\n葡語句子2\\n中文翻譯2\\n... 只輸出句子，不要有其他說明文字。圖片描述：這是一張包含自然風景和建築物的圖片。',
-                'C1': '請根據以下圖片描述，生成一篇約 150 字的葡語文章（C1 等級）。內容需包含：描述圖片 + 深入分析 + 社會連結。每句葡語後面必須緊接中文翻譯。格式：葡語句子1\\n中文翻譯1\\n葡語句子2\\n中文翻譯2\\n... 只輸出句子，不要有其他說明文字。圖片描述：這是一張包含自然風景和建築物的圖片。'
+                'A1': `請根據以下圖片描述，生成 5-8 句簡單的葡語句子（A1 等級）。
+            重要要求（請嚴格遵守）：
+            1. 每行只能寫一句話
+            2. 第1行寫葡語，第2行寫中文翻譯，第3行寫葡語，第4行寫中文翻譯，以此類推
+            3. 不要寫數字編號（如 "1."、"2."）
+            4. 不要寫任何額外的說明文字
+            5. 只輸出句子，不要有其他內容
+
+            圖片描述：這是一張包含自然風景和建築物的圖片。`,
+
+                'A2': `請根據以下圖片描述，生成 5-8 句葡語句子（A2 等級）。
+            重要要求（請嚴格遵守）：
+            1. 每行只能寫一句話
+            2. 第1行寫葡語，第2行寫中文翻譯，第3行寫葡語，第4行寫中文翻譯，以此類推
+            3. 不要寫數字編號（如 "1."、"2."）
+            4. 不要寫任何額外的說明文字
+            5. 只輸出句子，不要有其他內容
+
+            圖片描述：這是一張包含自然風景和建築物的圖片。`,
+
+                'B1': `請根據以下圖片描述，生成一篇約 150 字的葡語文章（B1 等級）。
+            內容需包含：描述圖片 + 表達個人觀點。使用連接詞。
+            重要要求（請嚴格遵守）：
+            1. 每行只能寫一句話
+            2. 第1行寫葡語，第2行寫中文翻譯，第3行寫葡語，第4行寫中文翻譯，以此類推
+            3. 不要寫數字編號（如 "1."、"2."）
+            4. 不要寫任何額外的說明文字
+            5. 只輸出句子，不要有其他內容
+
+            圖片描述：這是一張包含自然風景和建築物的圖片。`,
+
+                'B2': `請根據以下圖片描述，生成一篇約 150 字的葡語文章（B2 等級）。
+            內容需包含：描述圖片 + 表達觀點 + 分析批評。
+            重要要求（請嚴格遵守）：
+            1. 每行只能寫一句話
+            2. 第1行寫葡語，第2行寫中文翻譯，第3行寫葡語，第4行寫中文翻譯，以此類推
+            3. 不要寫數字編號（如 "1."、"2."）
+            4. 不要寫任何額外的說明文字
+            5. 只輸出句子，不要有其他內容
+
+            圖片描述：這是一張包含自然風景和建築物的圖片。`,
+
+                'C1': `請根據以下圖片描述，生成一篇約 150 字的葡語文章（C1 等級）。
+            內容需包含：描述圖片 + 深入分析 + 社會連結。
+            重要要求（請嚴格遵守）：
+            1. 每行只能寫一句話
+            2. 第1行寫葡語，第2行寫中文翻譯，第3行寫葡語，第4行寫中文翻譯，以此類推
+            3. 不要寫數字編號（如 "1."、"2."）
+            4. 不要寫任何額外的說明文字
+            5. 只輸出句子，不要有其他內容
+
+            圖片描述：這是一張包含自然風景和建築物的圖片。`
             };
 
             const content = await generateAISentences(prompts[level] || prompts['A2']);
@@ -1360,7 +2224,6 @@
                 return;
             }
 
-            // 渲染句子
             renderAISentences(resultArea, sentences, level);
             currentAISentences = sentences;
             showToast(`✅ 成功生成 ${sentences.length} 句！`);
@@ -1459,7 +2322,6 @@
         container.innerHTML = html;
         window._aiSentences = sentences;
 
-        // 點擊葡語播放
         document.querySelectorAll('.ai-pt-text').forEach(el => {
             el.addEventListener('click', function() {
                 const idx = parseInt(this.dataset.aiIndex);
@@ -1870,10 +2732,6 @@
     console.log('🤖 AI 看圖造句已啟用 (透過 Vercel 代理)');
     console.log('🎙️ 發音評分已啟用 (透過 Vercel 代理)');
 
-    // ================================================================
-    // 注意：請將完整的 50 篇文章數據 (ARTICLES_A1 和 ARTICLES_A2) 替換到此處
-    // 你可以從之前的備份中複製過來
-    // ================================================================
     </script>
 </body>
 </html>
