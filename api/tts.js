@@ -1,4 +1,4 @@
-// api/tts.js — Azure TTS + OpenAI + STT 代理 (最簡化穩定版)
+// api/tts.js — Azure TTS + OpenAI + STT 代理 (完整版)
 export default async function handler(req, res) {
     // ============================================================
     // 1. CORS 預檢請求 (OPTIONS)
@@ -18,15 +18,18 @@ export default async function handler(req, res) {
     }
 
     // ============================================================
-    // 3. 驗證密鑰
+    // 3. 驗證密鑰 (保護 Azure 額度)
     // ============================================================
     const secret = req.headers['x-proxy-secret'];
     const expectedSecret = process.env.PROXY_SECRET;
 
     if (!expectedSecret) {
+        console.error('⚠️ 伺服器未設定 PROXY_SECRET 環境變數');
         return res.status(500).json({ error: '伺服器設定錯誤' });
     }
+
     if (secret !== expectedSecret) {
+        console.warn('⚠️ 未授權的請求: 密鑰不匹配');
         return res.status(403).json({ error: '未授權' });
     }
 
@@ -35,14 +38,14 @@ export default async function handler(req, res) {
     // ============================================================
     const { action, text, voice, rate, sttAudio, prompt } = req.body;
 
-    // 環境變數
+    // 讀取環境變數
     const subscriptionKey = process.env.AZURE_KEY;
     const region = process.env.AZURE_REGION || 'southeastasia';
-    const openaiKey = process.env.AZURE_OPENAI_KEY;
-    const openaiEndpoint = process.env.AZURE_OPENAI_ENDPOINT;
-    const openaiDeployment = process.env.AZURE_OPENAI_DEPLOYMENT || 'gpt-5-mini';
     const sttKey = process.env.AZURE_STT_KEY || subscriptionKey;
 
+    // ============================================================
+    // 輔助函數：設定 CORS 標頭
+    // ============================================================
     function setCorsHeaders() {
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -63,6 +66,7 @@ export default async function handler(req, res) {
         }
 
         try {
+            // 獲取 Token
             const tokenResponse = await fetch(
                 `https://${region}.api.cognitive.microsoft.com/sts/v1.0/issuetoken`,
                 {
@@ -79,7 +83,7 @@ export default async function handler(req, res) {
                 const errorText = await tokenResponse.text();
                 setCorsHeaders();
                 return res.status(tokenResponse.status).json({
-                    error: `Token 獲取失敗: ${errorText}`
+                    error: `Token 獲取失敗 (${tokenResponse.status}): ${errorText}`
                 });
             }
 
@@ -113,7 +117,7 @@ export default async function handler(req, res) {
                 const errorText = await ttsResponse.text();
                 setCorsHeaders();
                 return res.status(ttsResponse.status).json({
-                    error: `TTS 調用失敗: ${errorText}`
+                    error: `TTS 調用失敗 (${ttsResponse.status}): ${errorText}`
                 });
             }
 
@@ -136,69 +140,7 @@ export default async function handler(req, res) {
     }
 
     // ============================================================
-    // 6. Azure OpenAI (看圖造句 + 發音評分) — 最簡化版本
-    // ============================================================
-    if (action === 'openai') {
-        if (!openaiKey || !openaiEndpoint) {
-            setCorsHeaders();
-            return res.status(500).json({ error: '伺服器未設定 Azure OpenAI 金鑰或端點' });
-        }
-
-        if (!prompt) {
-            setCorsHeaders();
-            return res.status(400).json({ error: '請提供提示詞 (prompt)' });
-        }
-
-        try {
-            // ★★★ 只使用最基本的參數 ★★★
-            const requestBody = {
-                messages: [
-                    { role: 'user', content: prompt }
-                ],
-                max_completion_tokens: 800
-            };
-
-            console.log('OpenAI 請求參數:', JSON.stringify(requestBody, null, 2));
-
-            const gptResponse = await fetch(
-                `${openaiEndpoint}openai/deployments/${openaiDeployment}/chat/completions?api-version=2024-02-15-preview`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'api-key': openaiKey,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(requestBody)
-                }
-            );
-
-            if (!gptResponse.ok) {
-                const errorText = await gptResponse.text();
-                console.error('OpenAI 錯誤回應:', errorText);
-                setCorsHeaders();
-                return res.status(gptResponse.status).json({
-                    error: `OpenAI 請求失敗 (${gptResponse.status}): ${errorText}`
-                });
-            }
-
-            const gptData = await gptResponse.json();
-            const content = gptData.choices[0].message.content;
-
-            setCorsHeaders();
-            return res.status(200).json({
-                success: true,
-                content: content
-            });
-
-        } catch (error) {
-            console.error('OpenAI 錯誤:', error);
-            setCorsHeaders();
-            return res.status(500).json({ error: `伺服器錯誤: ${error.message}` });
-        }
-    }
-
-    // ============================================================
-    // 7. Azure Speech-to-Text (語音轉文字)
+    // 6. Azure Speech-to-Text (語音轉文字) — 用於發音評分
     // ============================================================
     if (action === 'stt') {
         if (!sttKey) {
@@ -212,9 +154,14 @@ export default async function handler(req, res) {
         }
 
         try {
+            // 將 base64 轉為 Buffer
             const audioBuffer = Buffer.from(sttAudio, 'base64');
 
-            const sttResponse = await fetch(
+            console.log('STT 請求: 音頻大小', audioBuffer.length, 'bytes');
+
+            // 嘗試使用不同的端點格式
+            // 方法 1: 使用 conversation 端點
+            let sttResponse = await fetch(
                 `https://${region}.stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1?language=pt-PT&format=simple`,
                 {
                     method: 'POST',
@@ -226,8 +173,25 @@ export default async function handler(req, res) {
                 }
             );
 
+            // 如果失敗，嘗試使用 dictation 端點
+            if (!sttResponse.ok) {
+                console.log('STT: conversation 端點失敗，嘗試 dictation 端點');
+                sttResponse = await fetch(
+                    `https://${region}.stt.speech.microsoft.com/speech/recognition/dictation/cognitiveservices/v1?language=pt-PT&format=simple`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Ocp-Apim-Subscription-Key': sttKey,
+                            'Content-Type': 'audio/wav'
+                        },
+                        body: audioBuffer
+                    }
+                );
+            }
+
             if (!sttResponse.ok) {
                 const errorText = await sttResponse.text();
+                console.error('STT 請求失敗:', sttResponse.status, errorText);
                 setCorsHeaders();
                 return res.status(sttResponse.status).json({
                     error: `STT 請求失敗 (${sttResponse.status}): ${errorText}`
@@ -235,6 +199,7 @@ export default async function handler(req, res) {
             }
 
             const sttData = await sttResponse.json();
+            console.log('STT 回應:', sttData);
 
             setCorsHeaders();
             return res.status(200).json({
@@ -251,7 +216,7 @@ export default async function handler(req, res) {
     }
 
     // ============================================================
-    // 8. 未知 action
+    // 7. 未知 action
     // ============================================================
     setCorsHeaders();
     return res.status(400).json({ error: '未知的 action: ' + action });
