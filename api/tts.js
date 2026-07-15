@@ -1,4 +1,4 @@
-// api/tts.js — Azure TTS + OpenAI + STT 代理 (完整版)
+// api/tts.js — Azure TTS + OpenAI + STT 代理 (完整版 + CORS 修復)
 export default async function handler(req, res) {
     // ============================================================
     // 1. CORS 預檢請求 (OPTIONS)
@@ -36,7 +36,7 @@ export default async function handler(req, res) {
     // ============================================================
     // 4. 解析請求
     // ============================================================
-    const { action, text, voice, rate, level, imageBase64, sttAudio } = req.body;
+    const { action, text, voice, rate, level, imageBase64, sttAudio, prompt, systemPrompt } = req.body;
 
     // 讀取環境變數
     const subscriptionKey = process.env.AZURE_KEY;
@@ -47,15 +47,26 @@ export default async function handler(req, res) {
     const sttKey = process.env.AZURE_STT_KEY || subscriptionKey;
 
     // ============================================================
+    // 輔助函數：設定 CORS 標頭
+    // ============================================================
+    function setCorsHeaders() {
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-proxy-secret');
+    }
+
+    // ============================================================
     // 5. 根據 action 轉發請求
     // ============================================================
 
     // ---- 5.1 Azure TTS (語音合成) ----
     if (action === 'tts') {
         if (!text) {
+            setCorsHeaders();
             return res.status(400).json({ error: '請提供文字 (text)' });
         }
         if (!subscriptionKey) {
+            setCorsHeaders();
             return res.status(500).json({ error: '伺服器未設定 Azure 金鑰' });
         }
 
@@ -75,6 +86,7 @@ export default async function handler(req, res) {
 
             if (!tokenResponse.ok) {
                 const errorText = await tokenResponse.text();
+                setCorsHeaders();
                 return res.status(tokenResponse.status).json({
                     error: `Token 獲取失敗 (${tokenResponse.status}): ${errorText}`
                 });
@@ -108,6 +120,7 @@ export default async function handler(req, res) {
 
             if (!ttsResponse.ok) {
                 const errorText = await ttsResponse.text();
+                setCorsHeaders();
                 return res.status(ttsResponse.status).json({
                     error: `TTS 調用失敗 (${ttsResponse.status}): ${errorText}`
                 });
@@ -116,10 +129,7 @@ export default async function handler(req, res) {
             const audioBuffer = await ttsResponse.arrayBuffer();
             const base64Audio = Buffer.from(audioBuffer).toString('base64');
 
-            res.setHeader('Access-Control-Allow-Origin', '*');
-            res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-            res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-proxy-secret');
-
+            setCorsHeaders();
             return res.status(200).json({
                 success: true,
                 audio: base64Audio,
@@ -129,6 +139,7 @@ export default async function handler(req, res) {
 
         } catch (error) {
             console.error('TTS 錯誤:', error);
+            setCorsHeaders();
             return res.status(500).json({ error: `伺服器錯誤: ${error.message}` });
         }
     }
@@ -136,12 +147,12 @@ export default async function handler(req, res) {
     // ---- 5.2 Azure OpenAI (看圖造句 + 發音評分) ----
     if (action === 'openai') {
         if (!openaiKey || !openaiEndpoint) {
+            setCorsHeaders();
             return res.status(500).json({ error: '伺服器未設定 Azure OpenAI 金鑰或端點' });
         }
 
-        const { prompt, systemPrompt } = req.body;
-
         if (!prompt) {
+            setCorsHeaders();
             return res.status(400).json({ error: '請提供提示詞 (prompt)' });
         }
 
@@ -170,6 +181,7 @@ export default async function handler(req, res) {
 
             if (!gptResponse.ok) {
                 const errorText = await gptResponse.text();
+                setCorsHeaders();
                 return res.status(gptResponse.status).json({
                     error: `OpenAI 請求失敗 (${gptResponse.status}): ${errorText}`
                 });
@@ -178,10 +190,7 @@ export default async function handler(req, res) {
             const gptData = await gptResponse.json();
             const content = gptData.choices[0].message.content;
 
-            res.setHeader('Access-Control-Allow-Origin', '*');
-            res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-            res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-proxy-secret');
-
+            setCorsHeaders();
             return res.status(200).json({
                 success: true,
                 content: content
@@ -189,6 +198,7 @@ export default async function handler(req, res) {
 
         } catch (error) {
             console.error('OpenAI 錯誤:', error);
+            setCorsHeaders();
             return res.status(500).json({ error: `伺服器錯誤: ${error.message}` });
         }
     }
@@ -196,10 +206,12 @@ export default async function handler(req, res) {
     // ---- 5.3 Azure Speech-to-Text (語音轉文字) ----
     if (action === 'stt') {
         if (!sttKey) {
+            setCorsHeaders();
             return res.status(500).json({ error: '伺服器未設定 STT 金鑰' });
         }
 
         if (!sttAudio) {
+            setCorsHeaders();
             return res.status(400).json({ error: '請提供音頻資料 (sttAudio)' });
         }
 
@@ -221,6 +233,7 @@ export default async function handler(req, res) {
 
             if (!sttResponse.ok) {
                 const errorText = await sttResponse.text();
+                setCorsHeaders();
                 return res.status(sttResponse.status).json({
                     error: `STT 請求失敗 (${sttResponse.status}): ${errorText}`
                 });
@@ -228,10 +241,7 @@ export default async function handler(req, res) {
 
             const sttData = await sttResponse.json();
 
-            res.setHeader('Access-Control-Allow-Origin', '*');
-            res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-            res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-proxy-secret');
-
+            setCorsHeaders();
             return res.status(200).json({
                 success: true,
                 text: sttData.DisplayText || '',
@@ -240,10 +250,12 @@ export default async function handler(req, res) {
 
         } catch (error) {
             console.error('STT 錯誤:', error);
+            setCorsHeaders();
             return res.status(500).json({ error: `伺服器錯誤: ${error.message}` });
         }
     }
 
     // ---- 5.4 未知 action ----
+    setCorsHeaders();
     return res.status(400).json({ error: '未知的 action: ' + action });
 }
