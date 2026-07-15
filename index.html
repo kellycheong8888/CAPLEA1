@@ -1270,7 +1270,7 @@
             }
 
             // ============================================================
-            // 10. 錄音功能
+            // 10. 錄音功能（手機優化版）
             // ============================================================
             function toggleRecording(btn, key, index) {
                 if (isRecording) {
@@ -1284,9 +1284,22 @@
                     return;
                 }
 
+                // 檢查瀏覽器是否支援 getUserMedia
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    showToast('⚠️ 此瀏覽器不支援錄音功能');
+                    return;
+                }
+
                 navigator.mediaDevices.getUserMedia({ audio: true })
                     .then(stream => {
-                        mediaRecorder = new MediaRecorder(stream);
+                        // ★★★ 改用 audio/mp4 格式（手機支援度更好）★★★
+                        const options = { mimeType: 'audio/webm' };
+                        // 如果瀏覽器不支援 webm，改用 mp4
+                        if (!MediaRecorder.isTypeSupported('audio/webm')) {
+                            options.mimeType = 'audio/mp4';
+                        }
+                        
+                        mediaRecorder = new MediaRecorder(stream, options);
                         audioChunks = [];
 
                         mediaRecorder.ondataavailable = event => {
@@ -1294,28 +1307,52 @@
                         };
 
                         mediaRecorder.onstop = function() {
-                            const blob = new Blob(audioChunks, { type: 'audio/webm' });
+                            const blob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
+                            
+                            // ★★★ 檢查檔案大小 ★★★
+                            if (blob.size === 0) {
+                                showToast('⚠️ 錄音檔案為空，請重新錄製');
+                                return;
+                            }
+                            
                             const reader = new FileReader();
                             reader.onload = function(e) {
-                                const base64 = e.target.result.split(',')[1];
-                                localStorage.setItem(key, base64);
-                                btn.textContent = '🎙';
-                                btn.classList.remove('recording');
-                                isRecording = false;
-                                const playbackBtn = btn.parentElement.querySelector('.playback-btn');
-                                if (playbackBtn) {
-                                    playbackBtn.disabled = false;
+                                try {
+                                    const base64 = e.target.result.split(',')[1];
+                                    // ★★★ 檢查 base64 長度 ★★★
+                                    if (base64.length > 4000000) { // 約 3MB
+                                        showToast('⚠️ 錄音檔案太大，請縮短錄音時間');
+                                        return;
+                                    }
+                                    localStorage.setItem(key, base64);
+                                    // 同時儲存 MIME 類型
+                                    localStorage.setItem(key + '_type', mediaRecorder.mimeType || 'audio/webm');
+                                    
+                                    btn.textContent = '🎙';
+                                    btn.classList.remove('recording');
+                                    isRecording = false;
+                                    
+                                    const playbackBtn = btn.parentElement.querySelector('.playback-btn');
+                                    if (playbackBtn) {
+                                        playbackBtn.disabled = false;
+                                    }
+                                    const statusSpan = btn.parentElement.querySelector('.record-status');
+                                    if (!statusSpan) {
+                                        const span = document.createElement('span');
+                                        span.className = 'record-status';
+                                        span.textContent = '✅';
+                                        btn.parentElement.appendChild(span);
+                                    } else {
+                                        statusSpan.textContent = '✅';
+                                    }
+                                    showToast('✅ 錄音已儲存！');
+                                } catch (err) {
+                                    showToast('⚠️ 錄音儲存失敗: ' + err.message);
+                                    console.error('儲存錯誤:', err);
                                 }
-                                const statusSpan = btn.parentElement.querySelector('.record-status');
-                                if (!statusSpan) {
-                                    const span = document.createElement('span');
-                                    span.className = 'record-status';
-                                    span.textContent = '✅';
-                                    btn.parentElement.appendChild(span);
-                                } else {
-                                    statusSpan.textContent = '✅';
-                                }
-                                showToast('✅ 錄音已儲存！');
+                            };
+                            reader.onerror = function() {
+                                showToast('⚠️ 讀取錄音檔案失敗');
                             };
                             reader.readAsDataURL(blob);
                             stream.getTracks().forEach(t => t.stop());
@@ -1328,13 +1365,19 @@
                         showToast('🎙 錄音中... 點擊停止');
                     })
                     .catch(err => {
-                        showToast('⚠️ 無法存取麥克風，請允許權限');
-                        console.error(err);
+                        console.error('麥克風錯誤:', err);
+                        if (err.name === 'NotAllowedError') {
+                            showToast('⚠️ 請允許麥克風權限後再試');
+                        } else if (err.name === 'NotFoundError') {
+                            showToast('⚠️ 找不到麥克風裝置');
+                        } else {
+                            showToast('⚠️ 無法存取麥克風: ' + err.message);
+                        }
                     });
             }
 
             // ============================================================
-            // 11. 回放錄音
+            // 11. 回放錄音（手機優化版）
             // ============================================================
             function playRecording(key) {
                 const data = localStorage.getItem(key);
@@ -1342,22 +1385,67 @@
                     showToast('⚠️ 沒有找到錄音');
                     return;
                 }
+                
                 try {
-                    const blob = base64ToBlob(data, 'audio/webm');
-                    const audio = new Audio(URL.createObjectURL(blob));
-                    audio.play();
-                    showToast('🔊 回放錄音中...');
+                    // ★★★ 取得儲存的 MIME 類型 ★★★
+                    const mimeType = localStorage.getItem(key + '_type') || 'audio/webm';
+                    const blob = base64ToBlob(data, mimeType);
+                    
+                    // ★★★ 檢查 blob 是否有效 ★★★
+                    if (blob.size === 0) {
+                        showToast('⚠️ 錄音檔案已損毀');
+                        return;
+                    }
+                    
+                    const audioUrl = URL.createObjectURL(blob);
+                    const audio = new Audio(audioUrl);
+                    
+                    // ★★★ 加入播放錯誤處理 ★★★
+                    audio.onerror = function(e) {
+                        console.error('播放錯誤:', e);
+                        showToast('⚠️ 無法播放錄音，可能格式不支援');
+                        // 嘗試用另一種方式播放（下載）
+                        downloadRecording(blob);
+                    };
+                    
                     audio.onended = function() {
+                        URL.revokeObjectURL(audioUrl);
                         showToast('✅ 回放結束');
                     };
+                    
+                    audio.play();
+                    showToast('🔊 回放錄音中...');
+                    
                 } catch (e) {
+                    console.error('回放錯誤:', e);
                     showToast('⚠️ 無法讀取錄音檔案');
-                    console.error(e);
+                    // 嘗試下載
+                    try {
+                        const blob = base64ToBlob(data, 'audio/webm');
+                        downloadRecording(blob);
+                    } catch (err) {
+                        showToast('⚠️ 錄音檔案已損毀，請重新錄製');
+                    }
                 }
             }
 
             // ============================================================
-            // 12. 控制事件
+            // 12. 下載錄音（替代方案）
+            // ============================================================
+            function downloadRecording(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `recording_${Date.now()}.webm`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showToast('📥 已下載錄音，可用播放器開啟');
+            }
+
+            // ============================================================
+            // 13. 控制事件
             // ============================================================
             playBtn.addEventListener('click', handlePlay);
             pauseBtn.addEventListener('click', handlePause);
@@ -1415,7 +1503,7 @@
             });
 
             // ============================================================
-            // 13. 鍵盤快捷鍵
+            // 14. 鍵盤快捷鍵
             // ============================================================
             document.addEventListener('keydown', function(e) {
                 if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
@@ -1425,7 +1513,7 @@
             });
 
             // ============================================================
-            // 14. 初始化
+            // 15. 初始化
             // ============================================================
             renderArticle(0);
             document.getElementById('totalBadge').textContent = `${ARTICLES_RAW.length} 篇文章`;
