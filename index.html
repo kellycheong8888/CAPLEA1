@@ -3010,7 +3010,7 @@
         reader.readAsDataURL(blob);
     }
 
-               function playRecording(key) {
+                   function playRecording(key) {
         const data = localStorage.getItem(key);
         if (!data) { 
             showToast('⚠️ 沒有錄音'); 
@@ -3021,13 +3021,11 @@
             const blob = base64ToBlob(data, mimeType);
             const url = URL.createObjectURL(blob);
             const audio = new Audio(url);
-            
-            // 🔊 音量最大值為 1.0（瀏覽器限制）
             audio.volume = 1.0;
             
             audio.play().catch(e => {
                 console.error('播放失敗:', e);
-                showToast('⚠️ 播放失敗，請重新錄音');
+                showToast('⚠️ 播放失敗');
             });
             
             audio.onended = () => { 
@@ -3047,7 +3045,6 @@
             showToast('⚠️ 播放失敗');
         }
     }
-
     function downloadRecording(blob) {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
