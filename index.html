@@ -2929,13 +2929,20 @@
             offset += arr.length;
         }
 
+                // 檢查音量（加入除錯資訊）
         let maxVolume = 0;
         for (let i = 0; i < Math.min(pcmBuffer.length, 1000); i++) {
             const abs = Math.abs(pcmBuffer[i]);
             if (abs > maxVolume) maxVolume = abs;
         }
+        
+        // 🔍 除錯：在電腦 Console 中顯示實際音量值
+        console.log('🎤 檢測到的最大音量:', maxVolume);
+        console.log('📊 錄音數據長度:', pcmBuffer.length);
+        
         if (maxVolume < 1) {
-            showToast('⚠️ 錄音音量過低，請靠近麥克風說話');
+            // 顯示實際檢測值，方便調整門檻
+            showToast('⚠️ 錄音音量過低，請靠近麥克風說話（檢測值: ' + maxVolume + '）');
             cleanupRecording(btn);
             return;
         }
