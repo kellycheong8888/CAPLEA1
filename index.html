@@ -2762,7 +2762,7 @@
     }
 
     // ================================================================
-    // 10. 錄音功能（直接錄製 WAV 格式，相容所有裝置）
+    // 10. 錄音功能（使用 AudioWorkletNode - 現代、穩定）
     // ================================================================
 
     let audioContext = null;
@@ -2771,14 +2771,8 @@
     let recordingStartTime = 0;
     let pcmData = [];
     let sampleRate = 16000;
-
-    function isIOS() {
-        return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    }
-
-    function isSafari() {
-        return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-    }
+    let workletNode = null;
+    let workletLoaded = false;
 
     function toggleRecording(btn, key, index) {
         if (isRecording) {
@@ -2801,10 +2795,6 @@
             }
         };
 
-        if (isIOS() || isSafari()) {
-            constraints.audio = true;
-        }
-
         navigator.mediaDevices.getUserMedia(constraints)
             .then(stream => {
                 mediaStream = stream;
@@ -2814,7 +2804,7 @@
                 btn.classList.add('recording');
                 showToast('🎙 錄音中... 點擊停止');
 
-                startWavRecording(stream, btn, key);
+                startWorkletRecording(stream, btn, key);
             })
             .catch(err => {
                 console.error('麥克風錯誤:', err);
@@ -2828,10 +2818,74 @@
             });
     }
 
-    function startWavRecording(stream, btn, key) {
+    async function startWorkletRecording(stream, btn, key) {
         try {
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
             sampleRate = audioContext.sampleRate;
+            
+            // 加載 Worklet 處理器（如果尚未加載）
+            if (!workletLoaded) {
+                try {
+                    await audioContext.audioWorklet.addModule('processor.js');
+                    workletLoaded = true;
+                    console.log('✅ AudioWorklet 加載成功');
+                } catch (loadError) {
+                    console.warn('AudioWorklet 加載失敗，使用備用方案:', loadError);
+                    // 如果 Worklet 加載失敗，使用原有的 ScriptProcessorNode 作為備用
+                    startLegacyRecording(stream, btn, key);
+                    return;
+                }
+            }
+            
+            const source = audioContext.createMediaStreamSource(stream);
+            workletNode = new AudioWorkletNode(audioContext, 'recorder-processor');
+            
+            pcmData = [];
+
+            workletNode.port.onmessage = (event) => {
+                if (!isRecording) return;
+                const inputData = event.data;
+                const pcm = new Int16Array(inputData.length);
+                for (let i = 0; i < inputData.length; i++) {
+                    const s = Math.max(-1, Math.min(1, inputData[i]));
+                    pcm[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+                }
+                pcmData.push(pcm);
+            };
+
+            source.connect(workletNode);
+            workletNode.connect(audioContext.destination);
+
+            btn._worklet = {
+                context: audioContext,
+                source: source,
+                node: workletNode,
+                stream: stream,
+                type: 'worklet'
+            };
+
+            btn._checkInterval = setInterval(() => {
+                if (!isRecording) return;
+                const duration = (Date.now() - recordingStartTime) / 1000;
+                if (duration > 30) {
+                    showToast('⏹️ 錄音超過 30 秒，自動停止');
+                    stopRecording(btn, key);
+                }
+            }, 5000);
+
+        } catch (e) {
+            console.error('Worklet 錄音失敗，使用備用方案:', e);
+            startLegacyRecording(stream, btn, key);
+        }
+    }
+
+    // 備用方案：使用 ScriptProcessorNode（相容舊瀏覽器）
+    function startLegacyRecording(stream, btn, key) {
+        try {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                sampleRate = audioContext.sampleRate;
+            }
             
             const source = audioContext.createMediaStreamSource(stream);
             const processor = audioContext.createScriptProcessor(4096, 1, 1);
@@ -2852,11 +2906,12 @@
                 pcmData.push(pcm);
             };
 
-            btn._audioContext = {
+            btn._worklet = {
                 context: audioContext,
                 source: source,
                 processor: processor,
-                stream: stream
+                stream: stream,
+                type: 'legacy'
             };
 
             btn._checkInterval = setInterval(() => {
@@ -2869,8 +2924,8 @@
             }, 5000);
 
         } catch (e) {
-            console.error('AudioContext 錄音失敗:', e);
-            showToast('⚠️ 錄音初始化失敗: ' + e.message);
+            console.error('備用錄音失敗:', e);
+            showToast('⚠️ 錄音初始化失敗，請重試');
             if (mediaStream) {
                 mediaStream.getTracks().forEach(t => t.stop());
                 mediaStream = null;
@@ -2893,9 +2948,10 @@
             return;
         }
 
-        if (btn._audioContext) {
+        if (btn._worklet) {
             try {
-                const { context, source, processor, stream } = btn._audioContext;
+                const { context, source, node, processor, stream } = btn._worklet;
+                if (node) node.disconnect();
                 if (processor) processor.disconnect();
                 if (source) source.disconnect();
                 if (context && context.state !== 'closed') {
@@ -2905,9 +2961,9 @@
                     stream.getTracks().forEach(t => t.stop());
                 }
             } catch (e) {
-                console.error('清理 AudioContext 錯誤:', e);
+                console.error('清理錯誤:', e);
             }
-            btn._audioContext = null;
+            btn._worklet = null;
         }
 
         if (btn._checkInterval) {
@@ -2929,19 +2985,17 @@
             offset += arr.length;
         }
 
-                // 檢查音量（加入除錯資訊）
+        // 音量檢測（門檻已降低）
         let maxVolume = 0;
         for (let i = 0; i < Math.min(pcmBuffer.length, 1000); i++) {
             const abs = Math.abs(pcmBuffer[i]);
             if (abs > maxVolume) maxVolume = abs;
         }
         
-        // 🔍 除錯：在電腦 Console 中顯示實際音量值
         console.log('🎤 檢測到的最大音量:', maxVolume);
-        console.log('📊 錄音數據長度:', pcmBuffer.length);
         
-        if (maxVolume < 1) {
-            // 顯示實際檢測值，方便調整門檻
+        // 門檻值降為 5，提高相容性
+        if (maxVolume < 5) {
             showToast('⚠️ 錄音音量過低，請靠近麥克風說話（檢測值: ' + maxVolume + '）');
             cleanupRecording(btn);
             return;
