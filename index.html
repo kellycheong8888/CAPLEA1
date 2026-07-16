@@ -3049,9 +3049,10 @@
         return common.length / union.size;
     }
 
-    async function handleScore(key, text, index) {
+        async function handleScore(key, text, index) {
         console.log('⭐ 評分按鈕被點擊！');
         console.log('📝 原句:', text);
+        console.log('🌐 瀏覽器資訊:', navigator.userAgent);
         
         const article = getCurrentArticle();
         if (!article) {
@@ -3074,21 +3075,27 @@
         }
         
         console.log('📦 錄音資料長度:', data.length);
+        console.log('📦 錄音資料前 50 字元:', data.substring(0, 50));
 
         scoreResult.className = 'score-result show';
         scoreResult.innerHTML = '<div style="color:#6b7a8a;">⏳ AI 正在分析發音...</div>';
 
         try {
             console.log('📤 準備發送 STT 請求...');
+            console.log('📤 Proxy URL:', PROXY_URL);
             
             // 測試 Proxy 是否可達
             try {
                 const testResponse = await fetch(PROXY_URL, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'x-proxy-secret': PROXY_SECRET },
+                    headers: { 
+                        'Content-Type': 'application/json', 
+                        'x-proxy-secret': PROXY_SECRET 
+                    },
                     body: JSON.stringify({ action: 'ping' })
                 });
-                console.log('📥 Proxy 測試回應:', testResponse.status);
+                const testData = await testResponse.json();
+                console.log('📥 Proxy 測試回應:', testResponse.status, testData);
             } catch (testError) {
                 console.error('❌ Proxy 無法連線:', testError);
                 scoreResult.innerHTML = `<div style="color:#dc2626;">⚠️ 無法連線到語音伺服器，請檢查網路</div>`;
@@ -3097,9 +3104,11 @@
 
             const userText = await sttWithProxy(data);
             console.log('📥 STT 結果:', userText);
+            console.log('📥 STT 結果長度:', userText ? userText.length : 0);
 
-            if (!userText) {
-                scoreResult.innerHTML = `<div style="color:#dc2626;">⚠️ 無法辨識語音，請確保麥克風清晰並重新錄音</div>`;
+            if (!userText || userText.trim() === '') {
+                scoreResult.innerHTML = `<div style="color:#dc2626;">⚠️ 無法辨識語音，請確保麥克風清晰並重新錄音<br>
+                <span style="font-size:12px;color:#6b7a8a;">提示：檢查麥克風權限，或嘗試在無痕模式中測試</span></div>`;
                 return;
             }
 
@@ -3145,6 +3154,7 @@
 
         } catch (error) {
             console.error('❌ 評分錯誤:', error);
+            console.error('❌ 錯誤詳情:', error.message);
             scoreResult.innerHTML = `
                 <div style="color:#dc2626;">⚠️ 評分失敗: ${error.message}</div>
                 <div style="margin-top:8px;font-size:14px;color:#6b7a8a;">
@@ -3154,6 +3164,8 @@
             showToast('⚠️ 評分失敗，請稍後再試');
         }
     }
+        
+       
 
     // ================================================================
     // 12. 練習記錄
