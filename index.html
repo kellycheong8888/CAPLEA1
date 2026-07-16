@@ -2258,10 +2258,7 @@
     let currentPage = 1;
     const ITEMS_PER_PAGE = 10;
 
-    let mediaRecorder = null;
-    let audioChunks = [];
-    let isRecording = false;
-
+        
     const PROXY_URL = 'https://azure-tts-proxy.vercel.app/api/tts';
     const PROXY_SECRET = 'mysecret2026';
 
@@ -2764,7 +2761,7 @@
         });
     }
 
-        // ================================================================
+    // ================================================================
     // 10. 錄音功能（直接錄製 WAV 格式，相容所有裝置）
     // ================================================================
 
