@@ -2993,8 +2993,9 @@
         URL.revokeObjectURL(url);
         showToast('📥 已下載錄音，可用播放器開啟');
     }
+    
     // ================================================================
-    // 11. 發音評分 (使用 Azure Speech-to-Text)
+    // 11. 發音評分 (使用 Azure Speech-to-Text) - 修正版
     // ================================================================
 
     function calculateSimilarity(str1, str2) {
@@ -3007,22 +3008,53 @@
     }
 
     async function handleScore(key, text, index) {
+        console.log('⭐ 評分按鈕被點擊！');
+        console.log('📝 原句:', text);
+        
         const article = getCurrentArticle();
-        if (!article) return;
+        if (!article) {
+            console.error('❌ 找不到文章');
+            showToast('⚠️ 找不到文章');
+            return;
+        }
+        
         const scoreResult = document.getElementById(`scoreResult_${article.id}_${index}`);
-        if (!scoreResult) return;
+        if (!scoreResult) {
+            console.error('❌ 找不到評分區域');
+            showToast('⚠️ 評分區域錯誤');
+            return;
+        }
 
         const data = localStorage.getItem(key);
         if (!data) {
             showToast('⚠️ 請先錄音再評分');
             return;
         }
+        
+        console.log('📦 錄音資料長度:', data.length);
 
         scoreResult.className = 'score-result show';
         scoreResult.innerHTML = '<div style="color:#6b7a8a;">⏳ AI 正在分析發音...</div>';
 
         try {
+            console.log('📤 準備發送 STT 請求...');
+            
+            // 測試 Proxy 是否可達
+            try {
+                const testResponse = await fetch(PROXY_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'x-proxy-secret': PROXY_SECRET },
+                    body: JSON.stringify({ action: 'ping' })
+                });
+                console.log('📥 Proxy 測試回應:', testResponse.status);
+            } catch (testError) {
+                console.error('❌ Proxy 無法連線:', testError);
+                scoreResult.innerHTML = `<div style="color:#dc2626;">⚠️ 無法連線到語音伺服器，請檢查網路</div>`;
+                return;
+            }
+
             const userText = await sttWithProxy(data);
+            console.log('📥 STT 結果:', userText);
 
             if (!userText) {
                 scoreResult.innerHTML = `<div style="color:#dc2626;">⚠️ 無法辨識語音，請確保麥克風清晰並重新錄音</div>`;
@@ -3070,7 +3102,7 @@
             showToast(`✅ 評分完成！分數: ${score}/10`);
 
         } catch (error) {
-            console.error('評分錯誤:', error);
+            console.error('❌ 評分錯誤:', error);
             scoreResult.innerHTML = `
                 <div style="color:#dc2626;">⚠️ 評分失敗: ${error.message}</div>
                 <div style="margin-top:8px;font-size:14px;color:#6b7a8a;">
