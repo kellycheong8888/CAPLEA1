@@ -2801,15 +2801,16 @@
                 const processor = audioContext.createScriptProcessor(4096, 1, 1);
                 pcmData = [];
 
-                                processor.onaudioprocess = function(e) {
+                                    processor.onaudioprocess = function(e) {
                     if (!isRecording) return;
                     const inputData = e.inputBuffer.getChannelData(0);
                     const pcm = new Int16Array(inputData.length);
-                    const gain = 1.5;  // 放大 1.5 倍
+                    // 音量增益係數 2.0 倍
+                    const gain = 2.0;
                     for (let i = 0; i < inputData.length; i++) {
                         let s = Math.max(-1, Math.min(1, inputData[i]));
-                        s = s * gain;
-                        s = Math.max(-1, Math.min(1, s));
+                        s = s * gain;  // 放大音量
+                        s = Math.max(-1, Math.min(1, s));  // 防止爆音
                         pcm[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
                     }
                     pcmData.push(pcm);
@@ -3009,7 +3010,7 @@
         reader.readAsDataURL(blob);
     }
 
-    function playRecording(key) {
+        function playRecording(key) {
         const data = localStorage.getItem(key);
         if (!data) { showToast('⚠️ 沒有錄音'); return; }
         try {
@@ -3017,10 +3018,29 @@
             const blob = base64ToBlob(data, mimeType);
             const url = URL.createObjectURL(blob);
             const audio = new Audio(url);
-            audio.onended = () => { URL.revokeObjectURL(url); };
-            audio.play();
-            showToast('🔊 播放中...');
+            
+            // 🔊 音量放大 3 倍，讓回放更清晰
+            audio.volume = 3.0;
+            
+            // 確保音訊完全載入後再播放
+            audio.oncanplaythrough = () => {
+                audio.play();
+            };
+            
+            audio.onended = () => { 
+                URL.revokeObjectURL(url); 
+            };
+            
+            audio.onerror = (e) => {
+                console.error('音訊載入錯誤:', e);
+                showToast('⚠️ 播放失敗，請重新錄音');
+                URL.revokeObjectURL(url);
+            };
+            
+            audio.load();
+            showToast('🔊 載入中...');
         } catch (e) {
+            console.error('播放錯誤:', e);
             showToast('⚠️ 播放失敗');
         }
     }
