@@ -2762,7 +2762,7 @@
     }
 
     // ================================================================
-    // 10. 錄音功能（使用 MediaRecorder - 相容性最佳）
+    // 10. 錄音功能（純 MediaRecorder - 無需 Worklet）
     // ================================================================
 
     let mediaStream = null;
@@ -2780,14 +2780,8 @@
             return;
         }
 
-        // 簡化音頻約束，讓瀏覽器自動選擇最佳設定
-        const constraints = {
-            audio: {
-                echoCancellation: true,
-                noiseSuppression: true,
-                autoGainControl: true
-            }
-        };
+        // 使用最簡化的音頻約束
+        const constraints = { audio: true };
 
         navigator.mediaDevices.getUserMedia(constraints)
             .then(stream => {
@@ -2819,11 +2813,11 @@
 
     function startMediaRecorder(stream, btn, key) {
         try {
-            // 嘗試多種 MIME type（優先順序：iOS 相容 > 標準）
+            // 嘗試多種 MIME type
             const mimeTypes = [
-                'audio/mp4',
                 'audio/webm;codecs=opus',
                 'audio/webm',
+                'audio/mp4',
                 'audio/ogg;codecs=opus'
             ];
 
@@ -2856,7 +2850,7 @@
                 
                 if (duration < 1.5) {
                     showToast('⚠️ 錄音太短（' + duration.toFixed(1) + '秒），請說完整句子');
-                    cleanupMediaRecorder(btn);
+                    cleanupRecording();
                     return;
                 }
 
@@ -2865,7 +2859,7 @@
                 
                 if (blob.size < 2000) {
                     showToast('⚠️ 錄音檔案太小，請重新錄製');
-                    cleanupMediaRecorder(btn);
+                    cleanupRecording();
                     return;
                 }
 
@@ -2878,20 +2872,16 @@
         } catch (e) {
             console.error('MediaRecorder 啟動失敗:', e);
             showToast('⚠️ 錄音啟動失敗: ' + e.message);
-            cleanupMediaRecorder(btn);
+            cleanupRecording();
         }
     }
 
-    function cleanupMediaRecorder(btn) {
+    function cleanupRecording() {
         if (mediaStream) {
             mediaStream.getTracks().forEach(t => t.stop());
             mediaStream = null;
         }
         isRecording = false;
-        if (btn) {
-            btn.textContent = '🎙 錄音';
-            btn.classList.remove('recording');
-        }
     }
 
     function stopRecording(btn, key) {
@@ -2899,7 +2889,6 @@
         btn.textContent = '🎙 錄音';
         btn.classList.remove('recording');
 
-        // 停止 MediaRecorder
         if (btn._recorder && btn._recorder.state === 'recording') {
             try {
                 btn._recorder.stop();
@@ -2909,12 +2898,7 @@
             btn._recorder = null;
         }
 
-        // 清理媒體流
-        if (mediaStream) {
-            mediaStream.getTracks().forEach(t => t.stop());
-            mediaStream = null;
-        }
-
+        cleanupRecording();
         showToast('⏹️ 錄音已停止');
     }
 
@@ -2946,11 +2930,7 @@
                     statusSpan.textContent = '✅';
                 }
                 
-                if (mediaStream) {
-                    mediaStream.getTracks().forEach(t => t.stop());
-                    mediaStream = null;
-                }
-                
+                cleanupRecording();
                 showToast('✅ 錄音已儲存！');
             } catch (err) {
                 showToast('⚠️ 錄音儲存失敗: ' + err.message);
