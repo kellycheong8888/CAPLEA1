@@ -80,7 +80,7 @@
         .category-tabs button { flex: 1; border: 2px solid #d0d8e0; border-radius: 40px; padding: 12px 18px; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.2s; background: #f5f7fa; color: #4a5a6a; }
         .category-tabs button:hover { background: #e8edf2; }
         .category-tabs button.active-a1 { background: #dbeafe; border-color: #2563eb; color: #1d4ed8; }
-        .category-tabs button.active-a2 { background: #d1fae5; border-color: #059669; color: #047857; }
+        .category-tabs button.active-b1 { background: #d1fae5; border-color: #059669; color: #047857; }
 
         .pagination { display: flex; justify-content: center; align-items: center; gap: 8px; margin: 16px 0 20px; flex-wrap: wrap; }
         .pagination button { border: 1px solid #d0d8e0; border-radius: 30px; padding: 6px 16px; background: transparent; font-size: 14px; font-weight: 600; color: #4a5a6a; cursor: pointer; transition: 0.15s; }
@@ -329,7 +329,7 @@
 
             <div class="category-tabs" id="categoryTabs">
                 <button class="active-a1" data-category="a1">📘 A1-A2 看圖說話（50篇）</button>
-                <button data-category="a2">📗 B1-B2 看圖說話（10篇）</button>
+                <button data-category="b1">📗 B1-B2 看圖說話（20篇）</button>
             </div>
 
             <div class="pagination" id="pagination"></div>
@@ -379,8 +379,7 @@
     // ================================================================
 
     // ---- A1-A2 看圖說話 (50篇) ----
-    const ARTICLES_A1 = [
-        // 1. 浴室
+    const ARTICLES_A1 = [        // 1. 浴室
         {
             id: 'a1_1',
             title: 'Casa de banho',
@@ -778,7 +777,7 @@
         },
         // 21. 冰箱
         {
-            id: 'a2_1',
+            id: 'a1_21',
             title: 'Frigorífico',
             titleZh: '冰箱',
             icon: '🧊',
@@ -803,7 +802,7 @@
         },
         // 22. 水果籃
         {
-            id: 'a2_2',
+            id: 'a1_22',
             title: 'Cesto de Fruta',
             titleZh: '水果籃',
             icon: '🍇',
@@ -828,7 +827,7 @@
         },
         // 23. 客廳擺設
         {
-            id: 'a2_3',
+            id: 'a1_23',
             title: 'Sala de Estar',
             titleZh: '客廳擺設',
             icon: '🛋️',
@@ -853,7 +852,7 @@
         },
         // 24. 臥室
         {
-            id: 'a2_4',
+            id: 'a1_24',
             title: 'Quarto Arrumado',
             titleZh: '臥室',
             icon: '🛏️',
@@ -876,7 +875,7 @@
         },
         // 25. 陽台植物
         {
-            id: 'a2_5',
+            id: 'a1_25',
             title: 'Varanda com Plantas',
             titleZh: '陽台植物',
             icon: '🌿',
@@ -901,7 +900,7 @@
         },
         // 26. 廚房做飯
         {
-            id: 'a2_6',
+            id: 'a1_26',
             title: 'Cozinha Moderna',
             titleZh: '廚房做飯',
             icon: '🍳',
@@ -926,7 +925,7 @@
         },
         // 27. 花園
         {
-            id: 'a2_7',
+            id: 'a1_27',
             title: 'Jardim',
             titleZh: '花園',
             icon: '🌺',
@@ -951,7 +950,7 @@
         },
         // 28. 超市購物
         {
-            id: 'a2_8',
+            id: 'a1_28',
             title: 'Supermercado',
             titleZh: '超市購物',
             icon: '🛒',
@@ -974,7 +973,7 @@
         },
         // 29. 公園
         {
-            id: 'a2_9',
+            id: 'a1_29',
             title: 'Parque',
             titleZh: '公園',
             icon: '🌳',
@@ -997,7 +996,7 @@
         },
         // 30. 辦公室
         {
-            id: 'a2_10',
+            id: 'a1_30',
             title: 'Escritório',
             titleZh: '辦公室',
             icon: '🏢',
@@ -1020,7 +1019,7 @@
         },
         // 31. 海灘
         {
-            id: 'a2_11',
+            id: 'a1_31',
             title: 'Praia',
             titleZh: '海灘',
             icon: '🏖️',
@@ -1043,7 +1042,7 @@
         },
         // 32. 咖啡廳
         {
-            id: 'a2_12',
+            id: 'a1_32',
             title: 'Café',
             titleZh: '咖啡廳',
             icon: '☕',
@@ -1066,7 +1065,7 @@
         },
         // 33. 圖書館
         {
-            id: 'a2_13',
+            id: 'a1_33',
             title: 'Biblioteca',
             titleZh: '圖書館',
             icon: '📚',
@@ -1089,7 +1088,7 @@
         },
         // 34. 街頭市場
         {
-            id: 'a2_14',
+            id: 'a1_34',
             title: 'Mercado de Rua',
             titleZh: '街頭市場',
             icon: '🛍️',
@@ -1112,7 +1111,7 @@
         },
         // 35. 健身房
         {
-            id: 'a2_15',
+            id: 'a1_35',
             title: 'Ginásio',
             titleZh: '健身房',
             icon: '💪',
@@ -1135,7 +1134,7 @@
         },
         // 36. 火車站
         {
-            id: 'a2_16',
+            id: 'a1_36',
             title: 'Estação de Comboios',
             titleZh: '火車站',
             icon: '🚂',
@@ -1160,7 +1159,7 @@
         },
         // 37. 餐廳
         {
-            id: 'a2_17',
+            id: 'a1_37',
             title: 'Restaurante',
             titleZh: '餐廳',
             icon: '🍝',
@@ -1183,7 +1182,7 @@
         },
         // 38. 生日派對
         {
-            id: 'a2_18',
+            id: 'a1_38',
             title: 'Festa de Aniversário',
             titleZh: '生日派對',
             icon: '🎂',
@@ -1206,7 +1205,7 @@
         },
         // 39. 醫院候診室
         {
-            id: 'a2_19',
+            id: 'a1_39',
             title: 'Hospital',
             titleZh: '醫院候診室',
             icon: '🏥',
@@ -1229,7 +1228,7 @@
         },
         // 40. 機場
         {
-            id: 'a2_20',
+            id: 'a1_40',
             title: 'Aeroporto',
             titleZh: '機場',
             icon: '✈️',
@@ -1252,7 +1251,7 @@
         },
         // 41. 藥局
         {
-            id: 'a2_21',
+            id: 'a1_41',
             title: 'Farmácia',
             titleZh: '藥局',
             icon: '💊',
@@ -1275,7 +1274,7 @@
         },
         // 42. 熱鬧街道
         {
-            id: 'a2_22',
+            id: 'a1_42',
             title: 'Rua Movimentada',
             titleZh: '熱鬧街道',
             icon: '🚶',
@@ -1298,7 +1297,7 @@
         },
         // 43. 凌亂房間
         {
-            id: 'a2_23',
+            id: 'a1_43',
             title: 'Quarto Desarrumado',
             titleZh: '凌亂房間',
             icon: '🧹',
@@ -1323,7 +1322,7 @@
         },
         // 44. 洗衣服
         {
-            id: 'a2_24',
+            id: 'a1_44',
             title: 'Lavar Roupa',
             titleZh: '洗衣服',
             icon: '🧺',
@@ -1348,7 +1347,7 @@
         },
         // 45. 下雨天
         {
-            id: 'a2_25',
+            id: 'a1_45',
             title: 'Dia de Chuva',
             titleZh: '下雨天',
             icon: '🌧️',
@@ -1373,7 +1372,7 @@
         },
         // 46. 家庭辦公室
         {
-            id: 'a2_26',
+            id: 'a1_46',
             title: 'Escritório em Casa',
             titleZh: '家庭辦公室',
             icon: '🏠',
@@ -1398,7 +1397,7 @@
         },
         // 47. 鄰居
         {
-            id: 'a2_27',
+            id: 'a1_47',
             title: 'Vizinhos',
             titleZh: '鄰居',
             icon: '👋',
@@ -1419,9 +1418,9 @@
                 { text: '我認識我大樓裡的幾個鄰居。', type: 'zh' }
             ]
         },
-        // 48. 健身房 (重複)
+        // 48. 健身房
         {
-            id: 'a2_28',
+            id: 'a1_48',
             title: 'Ginásio',
             titleZh: '健身房',
             icon: '💪',
@@ -1444,7 +1443,7 @@
         },
         // 49. 在家工作
         {
-            id: 'a2_29',
+            id: 'a1_49',
             title: 'Trabalho em Casa',
             titleZh: '在家工作',
             icon: '💻',
@@ -1467,7 +1466,7 @@
         },
         // 50. 家裡有寵物
         {
-            id: 'a2_30',
+            id: 'a1_50',
             title: 'Cão em Casa',
             titleZh: '家裡有寵物',
             icon: '🐕',
@@ -1492,9 +1491,8 @@
         }
     ];
 
-    // ---- B1-B2看圖說話 (20篇) ----
-    const ARTICLES_A2 = [
-        // 1. 家庭野餐
+    // ---- B1-B2 看圖說話 (20篇) ----
+    const ARTICLES_B1 = [        // 1. 家庭野餐
         {
             id: 'b1_1',
             title: 'Piquenique em Família',
@@ -1865,13 +1863,378 @@
                 { text: 'Também é importante que os governos criem mais pontos de recolha seletiva e incentivem a reciclagem com campanhas públicas.', type: 'pt' },
                 { text: '政府設立更多分類回收點，並通過公共宣傳活動鼓勵回收也很重要。', type: 'zh' }
             ]
+        },
+            // 11. 家庭看電視
+        {
+            id: 'b1_11',
+            title: 'Família a ver TV',
+            titleZh: '家庭看電視',
+            icon: '📺',
+            sentences: [
+                { text: 'Nesta imagem, vemos uma família de três pessoas na sala, sentada no sofá, a ver televisão.', type: 'pt' },
+                { text: '在這張圖片中，我們看到一家三口坐在客廳沙發上一起看電視。', type: 'zh' },
+                { text: 'O pai, a mãe e um filho adolescente estão a rir de um programa de comédia que passa no ecrã.', type: 'pt' },
+                { text: '父親、母親和一個十幾歲的兒子正看著屏幕上的喜劇節目發笑。', type: 'zh' },
+                { text: 'O pai tem um braço apoiado no sofá e a mãe está com as pernas dobradas.', type: 'pt' },
+                { text: '父親一隻手搭在沙發靠背上，母親雙腿彎曲。', type: 'zh' },
+                { text: 'O filho está no meio, com uma tigela de pipocas no colo.', type: 'pt' },
+                { text: '兒子坐在中間，腿上放著一碗爆米花。', type: 'zh' },
+                { text: 'Há bebidas e pacotes de batatas fritas na mesa de centro.', type: 'pt' },
+                { text: '茶几上有飲料和薯片袋。', type: 'zh' },
+                { text: 'A sala é acolhedora, com cortinas bege, uma estante e uma luz suave de um candeeiro de mesa.', type: 'pt' },
+                { text: '客廳很溫馨，有米色窗簾、一個書架和柔和的檯燈光線。', type: 'zh' },
+                { text: 'É noite de fim de semana, e este é o momento de lazer habitual deles, um ritual familiar que todos apreciam.', type: 'pt' },
+                { text: '這是一個周末的晚上，是他們慣常的休閒時刻，一個全家人都喜歡的家庭儀式。', type: 'zh' },
+                { text: 'Ver TV em família pode ser uma atividade de união, desde que não seja passiva.', type: 'pt' },
+                { text: '全家一起看電視可以是一種增進感情的活動，只要不是被動的。', type: 'zh' },
+                { text: 'O importante é que a família esteja junta e partilhe o momento, comentando o programa e rindo juntos.', type: 'pt' },
+                { text: '關鍵是一家人在一起，分享時刻，評論節目，一起歡笑。', type: 'zh' },
+                { text: 'Isso promove a comunicação e o afeto.', type: 'pt' },
+                { text: '這能促進溝通和情感。', type: 'zh' },
+                { text: 'No entanto, é importante equilibrar o tempo de ecrã com outras atividades, como conversas, jogos de tabuleiro ou leitura.', type: 'pt' },
+                { text: '然而，平衡屏幕時間和其他活動也很重要，比如聊天、桌遊或閱讀。', type: 'zh' },
+                { text: 'Os pais devem dar o exemplo, limitando o seu próprio tempo de televisão.', type: 'pt' },
+                { text: '父母應該以身作則，限制自己的看電視時間。', type: 'zh' },
+                { text: 'Um bom programa educativo ou cultural pode até ser uma ferramenta de aprendizagem.', type: 'pt' },
+                { text: '一個好的教育或文化節目甚至可以成為學習工具。', type: 'zh' },
+                { text: 'No fundo, o que conta é a qualidade do tempo passado em conjunto.', type: 'pt' },
+                { text: '歸根結底，重要的是共度時光的質量。', type: 'zh' }
+            ]
+        },
+        // 12. 學生討論海報
+        {
+            id: 'b1_12',
+            title: 'Jovens a Discutir Cartaz',
+            titleZh: '學生討論海報',
+            icon: '📋',
+            sentences: [
+                { text: 'Nesta imagem, vemos dois estudantes universitários a olhar para um cartaz afixado num painel da faculdade.', type: 'pt' },
+                { text: '在這張圖片中，我們看到兩個大學生正看著學院公告欄上貼著的一張海報。', type: 'zh' },
+                { text: 'Um rapaz e uma rapariga apontam para o cartaz com entusiasmo e parecem a debater com animação.', type: 'pt' },
+                { text: '一個男生和一個女生熱情地指著海報，似乎在熱烈討論。', type: 'zh' },
+                { text: 'O cartaz, em cores vivas, anuncia um festival de música que vai realizar-se no próximo mês.', type: 'pt' },
+                { text: '海報色彩鮮豔，宣傳下個月將要舉行的一個音樂節。', type: 'zh' },
+                { text: 'A rapariga, de cabelo encaracolado e mochila às costas, sorri e gesticula.', type: 'pt' },
+                { text: '女孩捲髮，背著背包，微笑並做著手勢。', type: 'zh' },
+                { text: 'O rapaz, com óculos e camisa xadrez, parece ponderar as opções.', type: 'pt' },
+                { text: '男孩戴著眼鏡，穿著格子襯衫，似乎在權衡選擇。', type: 'zh' },
+                { text: 'Ao fundo, vemos outros alunos a passar e o edifício moderno da universidade.', type: 'pt' },
+                { text: '遠處，我們看到其他學生經過和現代風格的大學建築。', type: 'zh' },
+                { text: 'Eles estão a decidir se vão ao festival e a combinar os detalhes, como preços, transporte e horários.', type: 'pt' },
+                { text: '他們正在決定是否去這個音樂節，並商量細節，比如價格、交通和時間。', type: 'zh' },
+                { text: 'Provavelmente são amigos próximos que partilham gostos musicais semelhantes.', type: 'pt' },
+                { text: '他們很可能是關係親密的朋友，有相似的音樂品味。', type: 'zh' },
+                { text: 'Participar em eventos culturais é importante para os jovens.', type: 'pt' },
+                { text: '參加文化活動對年輕人很重要。', type: 'zh' },
+                { text: 'Amplia horizontes, cria redes de amizade e enriquece o currículo com experiências extracurriculares.', type: 'pt' },
+                { text: '它能開闊視野，建立友誼網絡，通過課外經歷豐富履歷。', type: 'zh' },
+                { text: 'Além disso, eventos como festivais de música promovem a expressão artística e o contacto com diferentes culturas.', type: 'pt' },
+                { text: '此外，像音樂節這樣的活動促進藝術表達和接觸不同文化。', type: 'zh' },
+                { text: 'As universidades devem promover mais atividades extracurriculares e divulgar bem os eventos nos painéis e redes sociais.', type: 'pt' },
+                { text: '大學應該推廣更多課外活動，並在公告欄和社交媒體上好好宣傳。', type: 'zh' },
+                { text: 'Os estudantes também deviam aproveitar estas oportunidades para sair da rotina académica e desenvolver competências sociais.', type: 'pt' },
+                { text: '學生也應該利用這些機會走出學業常規，發展社交技能。', type: 'zh' },
+                { text: 'É uma forma equilibrada de conciliar estudo e lazer.', type: 'pt' },
+                { text: '這是一種平衡學習和休閒的方式。', type: 'zh' }
+            ]
+        },
+        // 13. 超市購物
+        {
+            id: 'b1_13',
+            title: 'Casal no Supermercado',
+            titleZh: '超市購物',
+            icon: '🛒',
+            sentences: [
+                { text: 'Nesta imagem, vemos um casal no corredor de um supermercado, a olhar para uma lista de compras.', type: 'pt' },
+                { text: '在這張圖片中，我們看到一對夫婦在超市過道裡看著一張購物清單。', type: 'zh' },
+                { text: 'A mulher segura a lista e lê os itens em voz alta, enquanto o homem empurra o carrinho, que já tem frutas, vegetais, pão e iogurtes.', type: 'pt' },
+                { text: '女士拿著清單，大聲唸著物品，男士推著購物車，車裡已經有水果、蔬菜、麵包和酸奶。', type: 'zh' },
+                { text: 'Ela usa um casaco leve e ele uma camisa de manga curta.', type: 'pt' },
+                { text: '她穿著一件薄外套，他穿著短袖襯衫。', type: 'zh' },
+                { text: 'Há prateleiras cheias de produtos à volta deles: caixas de cereais, latas de conserva e garrafas de azeite.', type: 'pt' },
+                { text: '周圍架子上擺滿了產品：麥片盒、罐頭和橄欖油瓶。', type: 'zh' },
+                { text: 'O supermercado está bem iluminado e tem um piso limpo.', type: 'pt' },
+                { text: '超市光線充足，地板乾淨。', type: 'zh' },
+                { text: 'Ao fundo, vemos outros clientes e um funcionário a repor mercadorias.', type: 'pt' },
+                { text: '遠處，我們看到其他顧客和一個員工在補貨。', type: 'zh' },
+                { text: 'Estão a preparar um jantar especial, talvez para convidados ou para celebrar uma data importante.', type: 'pt' },
+                { text: '他們正在準備一頓特別的晚餐，也許是為了招待客人或慶祝一個重要日子。', type: 'zh' },
+                { text: 'A lista indica que planeiam com antecedência.', type: 'pt' },
+                { text: '清單表明他們提前計劃了。', type: 'zh' },
+                { text: 'Fazer compras em conjunto é uma tarefa doméstica que pode ser prazerosa e eficiente.', type: 'pt' },
+                { text: '一起購物是一件可以很愉快且高效的家務。', type: 'zh' },
+                { text: 'Permite planear refeições saudáveis, evitar desperdícios e controlar o orçamento familiar.', type: 'pt' },
+                { text: '它能計劃健康膳食、避免浪費和控制家庭預算。', type: 'zh' },
+                { text: 'Também é uma oportunidade para decidir em conjunto sobre a alimentação da família, incluindo as preferências de cada um.', type: 'pt' },
+                { text: '也是一起決定家庭飲食的機會，包括每個人的偏好。', type: 'zh' },
+                { text: 'Recomenda-se que as famílias façam uma lista antes de ir ao supermercado, para evitar compras por impulso.', type: 'pt' },
+                { text: '建議家庭去超市前列一個清單，避免衝動購物。', type: 'zh' },
+                { text: 'Além disso, ir ao supermercado com calma, sem pressa, torna a experiência mais agradável.', type: 'pt' },
+                { text: '此外，不慌不忙地去超市會讓體驗更愉快。', type: 'zh' },
+                { text: 'No fundo, comprar comida é um ato de cuidado com a saúde e o bem-estar de todos.', type: 'pt' },
+                { text: '歸根結底，購買食物是對每個人健康和福祉的關懷行為。', type: 'zh' }
+            ]
+        },
+        // 14. 花園閱讀
+        {
+            id: 'b1_14',
+            title: 'Homem a Ler no Jardim',
+            titleZh: '花園閱讀',
+            icon: '📖',
+            sentences: [
+                { text: 'Nesta imagem, vemos um homem de meia-idade sentado num banco de jardim, a ler um livro.', type: 'pt' },
+                { text: '在這張圖片中，我們看到一位中年男子坐在花園長椅上，讀著一本書。', type: 'zh' },
+                { text: 'Ele está sozinho, com um casaco leve e calças de ganga.', type: 'pt' },
+                { text: '他獨自一人，穿著薄外套和牛仔褲。', type: 'zh' },
+                { text: 'O livro está aberto nas mãos e ele parece completamente absorvido pela leitura, com uma expressão de concentração.', type: 'pt' },
+                { text: '書在手中打開，他似乎完全沉浸在閱讀中，表情專注。', type: 'zh' },
+                { text: 'O jardim está florido: há rosas vermelhas, margaridas e arbustos verdes.', type: 'pt' },
+                { text: '花園裡鮮花盛開：有紅玫瑰、雛菊和綠色灌木。', type: 'zh' },
+                { text: 'Ao fundo, vemos pessoas a passear calmamente, algumas com cães.', type: 'pt' },
+                { text: '遠處，我們看到人們悠閒地散步，有的帶著狗。', type: 'zh' },
+                { text: 'Há também uma fonte de pedra no centro do jardim, de onde jorra água.', type: 'pt' },
+                { text: '花園中央還有一座石製噴泉，水從中噴出。', type: 'zh' },
+                { text: 'Ele aproveitou uma pausa do trabalho ou um fim de semana tranquilo para ler ao ar livre, em contacto com a natureza.', type: 'pt' },
+                { text: '他利用工作休息或一個寧靜的週末在戶外讀書，接觸大自然。', type: 'zh' },
+                { text: 'Este é um momento de prazer pessoal.', type: 'pt' },
+                { text: '這是一個個人享受的時刻。', type: 'zh' },
+                { text: 'A leitura é um hábito que deve ser promovido em todas as idades.', type: 'pt' },
+                { text: '閱讀是一個應該在所有年齡段推廣的習慣。', type: 'zh' },
+                { text: 'Além de aumentar o conhecimento e o vocabulário, reduz o stress e melhora a capacidade de concentração.', type: 'pt' },
+                { text: '除了增長知識和詞彙量，它還能減輕壓力，提高專注力。', type: 'zh' },
+                { text: 'Combinar a leitura com espaços verdes é a receita perfeita para o bem-estar mental e físico.', type: 'pt' },
+                { text: '將閱讀與綠色空間結合，是心理和身體健康的完美配方。', type: 'zh' },
+                { text: 'As cidades deviam oferecer mais bancos em parques e incentivar a criação de bibliotecas ao ar livre.', type: 'pt' },
+                { text: '城市應該在公園提供更多長椅，並鼓勵創建戶外圖書館。', type: 'zh' },
+                { text: 'As famílias também deviam dar o exemplo, lendo em casa e comentando os livros com os filhos.', type: 'pt' },
+                { text: '家庭也應該以身作則，在家裡閱讀並和孩子討論書籍。', type: 'zh' },
+                { text: 'Num mundo cada vez mais digital, o livro em papel continua a ser um refúgio valioso.', type: 'pt' },
+                { text: '在一個日益數字化的世界裡，紙質書仍然是一個寶貴的避風港。', type: 'zh' }
+            ]
+        },
+        // 15. 桌遊
+        {
+            id: 'b1_15',
+            title: 'Crianças a Jogar Tabuleiro',
+            titleZh: '桌遊',
+            icon: '🎲',
+            sentences: [
+                { text: 'Nesta imagem, vemos quatro crianças sentadas à volta de uma mesa, a jogar um jogo de tabuleiro.', type: 'pt' },
+                { text: '在這張圖片中，我們看到四個孩子圍坐在一張桌子旁，在玩棋盤遊戲。', type: 'zh' },
+                { text: 'Há um tabuleiro colorido no centro, com peças de diferentes formas e cores.', type: 'pt' },
+                { text: '桌子中央有一個彩色棋盤，有不同形狀和顏色的棋子。', type: 'zh' },
+                { text: 'As crianças estão concentradas e uma delas, uma menina de cabelo ruivo, está prestes a lançar os dados.', type: 'pt' },
+                { text: '孩子們很專注，其中一個紅髮女孩正準備擲骰子。', type: 'zh' },
+                { text: 'Os outros três observam com atenção, alguns com expressões de ansiedade e outros de curiosidade.', type: 'pt' },
+                { text: '其他三個仔細觀察著，有的表情緊張，有的好奇。', type: 'zh' },
+                { text: 'A sala parece ser uma biblioteca escolar ou uma sala de atividades, com estantes cheias de livros e desenhos nas paredes.', type: 'pt' },
+                { text: '房間看起來像是學校圖書館或活動室，書架擺滿了書，牆上掛著畫。', type: 'zh' },
+                { text: 'Estão numa escola ou num centro de atividades, durante um intervalo ou numa aula de enriquecimento curricular.', type: 'pt' },
+                { text: '他們是在學校或活動中心，在課間休息或課外興趣課上。', type: 'zh' },
+                { text: 'O jogo de tabuleiro é a atividade escolhida para aprenderem juntos.', type: 'pt' },
+                { text: '桌遊是被選來一起學習的活動。', type: 'zh' },
+                { text: 'Os jogos de tabuleiro são excelentes para o desenvolvimento cognitivo e social das crianças.', type: 'pt' },
+                { text: '棋盤遊戲對兒童的認知和社交發展極好。', type: 'zh' },
+                { text: 'Ensinam a ganhar e a perder com desportivismo, a seguir regras, a cooperar e a pensar estrategicamente.', type: 'pt' },
+                { text: '它們教會輸贏的體育精神、遵守規則、合作和戰略性思考。', type: 'zh' },
+                { text: 'Deviam ser mais valorizados nas escolas e em casa, como alternativa aos ecrãs.', type: 'pt' },
+                { text: '應該在學校和家庭中得到更多重視，作為屏幕時間的替代。', type: 'zh' },
+                { text: 'Os pais e professores deviam reservar tempo semanal para jogar com as crianças, fortalecendo os laços e promovendo a aprendizagem lúdica.', type: 'pt' },
+                { text: '父母和老師應該每週留出時間和孩子一起玩遊戲，加強聯繫並促進趣味學習。', type: 'zh' },
+                { text: 'Além disso, os jogos de tabuleiro incentivam a comunicação e a paciência, competências essenciais para a vida adulta.', type: 'pt' },
+                { text: '此外，桌遊鼓勵溝通和耐心，這些都是成人生活的基本技能。', type: 'zh' }
+            ]
+        },
+        // 16. 酒店投訴
+        {
+            id: 'b1_16',
+            title: 'Reclamação no Hotel',
+            titleZh: '酒店投訴',
+            icon: '🏨',
+            sentences: [
+                { text: 'Nesta imagem, vemos uma hóspede a falar com o rececionista, com uma expressão claramente insatisfeita.', type: 'pt' },
+                { text: '在這張圖片中，我們看到一位客人正在和前台接待員交談，表情明顯不滿。', type: 'zh' },
+                { text: 'Ela tem uma mão na cintura e a outra segura a chave do quarto.', type: 'pt' },
+                { text: '她一手叉腰，另一手拿著房間鑰匙。', type: 'zh' },
+                { text: 'O rececionista parece calmo e profissional, a tentar resolver o problema com um bloco de notas na mão.', type: 'pt' },
+                { text: '接待員看起來很平靜且專業，手裡拿著一個筆記本，試圖解決問題。', type: 'zh' },
+                { text: 'A mulher veste roupa casual e tem uma mala a tiracolo.', type: 'pt' },
+                { text: '女人穿著休閒服，背著一個斜挎包。', type: 'zh' },
+                { text: 'Ao fundo, vemos o hall do hotel com um sofá, uma mesa de centro e flores frescas.', type: 'pt' },
+                { text: '遠處，我們看到酒店大堂有沙發、茶几和鮮花。', type: 'zh' },
+                { text: 'Há também um relógio de parede que marca as dez horas.', type: 'pt' },
+                { text: '還有一個掛鐘顯示十點。', type: 'zh' },
+                { text: 'Provavelmente está a queixar-se de barulho durante a noite, de falta de água quente no banheiro ou de Wi-Fi instável.', type: 'pt' },
+                { text: '她很可能在抱怨夜間噪音、浴室沒有熱水或Wi-Fi不穩定。', type: 'zh' },
+                { text: 'O rececionista está a ouvir com atenção para oferecer uma solução.', type: 'pt' },
+                { text: '接待員正在認真傾聽以提供解決方案。', type: 'zh' },
+                { text: 'As queixas num hotel devem ser tratadas com empatia e rapidez.', type: 'pt' },
+                { text: '酒店裡的投訴應該以同理心和速度處理。', type: 'zh' },
+                { text: 'Um bom atendimento ao cliente pode transformar uma experiência negativa numa positiva e até fidelizar o hóspede.', type: 'pt' },
+                { text: '良好的客戶服務可以將負面體驗轉化為正面，甚至留住客人。', type: 'zh' },
+                { text: 'É essencial ouvir ativamente o cliente, pedir desculpas sinceramente e oferecer alternativas viáveis, como mudar de quarto ou oferecer um pequeno-almoço grátis.', type: 'pt' },
+                { text: '積極傾聽客戶、真誠道歉並提供可行的替代方案至關重要，比如換房間或提供免費早餐。', type: 'zh' },
+                { text: 'Os hotéis deviam também investir em formação de funcionários para lidar com situações de conflito.', type: 'pt' },
+                { text: '酒店也應該投資培訓員工處理衝突情況。', type: 'zh' },
+                { text: 'Um cliente satisfeito partilha a sua experiência positiva, o que é a melhor publicidade para o estabelecimento.', type: 'pt' },
+                { text: '一個滿意的客戶會分享他的正面體驗，這是對酒店最好的廣告。', type: 'zh' }
+            ]
+        },
+        // 17. 圖書館計劃旅行
+        {
+            id: 'b1_17',
+            title: 'Amigos a Planear Viagem',
+            titleZh: '圖書館計劃旅行',
+            icon: '🌍',
+            sentences: [
+                { text: 'Nesta imagem, vemos três amigos na biblioteca, com um computador portátil aberto à sua frente, a pesquisar destinos de viagem.', type: 'pt' },
+                { text: '在這張圖片中，我們看到三個朋友在圖書館裡，面前打開著一台筆記本電腦，在搜索旅遊目的地。', type: 'zh' },
+                { text: 'Eles estão a olhar para o ecrã e a apontar, a discutir preços de voos e datas disponíveis.', type: 'pt' },
+                { text: '他們正看著屏幕並指著，討論航班價格和可用日期。', type: 'zh' },
+                { text: 'Um deles, um rapaz de óculos, parece estar a tomar notas num caderno.', type: 'pt' },
+                { text: '其中一個戴眼鏡的男孩正在筆記本上做筆記。', type: 'zh' },
+                { text: 'Uma rapariga com um casaco azul aponta para o ecrã com entusiasmo.', type: 'pt' },
+                { text: '一個穿藍外套的女孩興奮地指著屏幕。', type: 'zh' },
+                { text: 'O terceiro amigo, de camisola cinzenta, parece estar a calcular os custos.', type: 'pt' },
+                { text: '第三個朋友穿著灰色毛衣，似乎在計算費用。', type: 'zh' },
+                { text: 'A biblioteca tem mesas de madeira, candeeiros verdes e estantes altas com livros antigos.', type: 'pt' },
+                { text: '圖書館有木桌、綠色檯燈和高高的書架上擺滿了舊書。', type: 'zh' },
+                { text: 'Estão a planear as férias de verão, comparando diferentes opções de transporte e alojamento.', type: 'pt' },
+                { text: '他們正在計劃暑假，比較不同的交通和住宿選擇。', type: 'zh' },
+                { text: 'Provavelmente querem viajar juntos para um destino europeu.', type: 'pt' },
+                { text: '他們很可能想一起去一個歐洲目的地。', type: 'zh' },
+                { text: 'Planear uma viagem em grupo desenvolve competências de negociação, organização e trabalho em equipa.', type: 'pt' },
+                { text: '團體計劃旅行能培養談判、組織和團隊合作技能。', type: 'zh' },
+                { text: 'É importante ouvir as preferências de todos e chegar a um consenso, respeitando o orçamento e os interesses de cada um.', type: 'pt' },
+                { text: '傾聽所有人的偏好並達成共識，尊重每個人的預算和興趣很重要。', type: 'zh' },
+                { text: 'Viajar é uma das melhores formas de aprender sobre o mundo, conhecer novas culturas e criar memórias inesquecíveis.', type: 'pt' },
+                { text: '旅行是了解世界、認識新文化和創造難忘回憶的最佳方式之一。', type: 'zh' },
+                { text: 'Os amigos deviam aproveitar a juventude para explorar novos lugares, mesmo com orçamentos limitados, optando por alojamentos económicos como hostels.', type: 'pt' },
+                { text: '年輕人應該趁年輕探索新地方，即使預算有限，可以選擇青年旅舍等經濟住宿。', type: 'zh' },
+                { text: 'A experiência de viajar juntos fortalece a amizade e proporciona histórias para contar durante toda a vida.', type: 'pt' },
+                { text: '一起旅行的經歷能加強友誼，提供一生可講的故事。', type: 'zh' }
+            ]
+        },
+        // 18. 登山
+        {
+            id: 'b1_18',
+            title: 'Caminhada na Montanha',
+            titleZh: '登山',
+            icon: '⛰️',
+            sentences: [
+                { text: 'Nesta imagem, vemos um pai e a sua filha adolescente a caminhar num trilho de montanha.', type: 'pt' },
+                { text: '在這張圖片中，我們看到一位父親和他十幾歲的女兒正在山間小路上徒步。', type: 'zh' },
+                { text: 'O pai leva uma mochila grande às costas e usa botas de caminhada.', type: 'pt' },
+                { text: '父親背著一個大背包，穿著徒步靴。', type: 'zh' },
+                { text: 'A filha, de cabelo preso e roupa desportiva, leva uma garrafa de água na mão e um chapéu para se proteger do sol.', type: 'pt' },
+                { text: '女兒扎著頭髮，穿著運動服，手裡拿著水瓶，戴著遮陽帽。', type: 'zh' },
+                { text: 'A paisagem é verdejante, com árvores altas, arbustos e flores silvestres.', type: 'pt' },
+                { text: '風景鬱鬱蔥蔥，有高大的樹木、灌木和野花。', type: 'zh' },
+                { text: 'O céu está azul e há nuvens brancas.', type: 'pt' },
+                { text: '天空湛藍，有白雲。', type: 'zh' },
+                { text: 'O trilho é de terra batida e sobe suavemente.', type: 'pt' },
+                { text: '小路是土路，緩緩上升。', type: 'zh' },
+                { text: 'Ao fundo, vemos picos de montanhas cobertos de vegetação.', type: 'pt' },
+                { text: '遠處，我們看到覆蓋著植被的山峰。', type: 'zh' },
+                { text: 'Esta é uma atividade que repetem todos os meses para estar em contacto com a natureza e fugir da rotina da cidade.', type: 'pt' },
+                { text: '這是他們每個月都會重複的活動，為了接觸大自然，逃離城市日常。', type: 'zh' },
+                { text: 'É também um momento de conversa e partilha entre pai e filha.', type: 'pt' },
+                { text: '也是父女之間聊天和分享的時刻。', type: 'zh' },
+                { text: 'O contacto com a natureza é fundamental para todas as idades.', type: 'pt' },
+                { text: '與自然接觸對所有年齡段都至關重要。', type: 'zh' },
+                { text: 'Caminhar na montanha alivia o stress, melhora a forma física e fortalece o sistema cardiovascular.', type: 'pt' },
+                { text: '徒步登山能緩解壓力，改善體型，增強心血管系統。', type: 'zh' },
+                { text: 'É um excelente exemplo de como conciliar lazer e saúde em família.', type: 'pt' },
+                { text: '這是一個如何兼顧家庭休閒和健康的極好例子。', type: 'zh' },
+                { text: 'Os pais deviam incentivar os filhos a praticar atividades ao ar livre, em vez de ficar em casa com ecrãs.', type: 'pt' },
+                { text: '父母應該鼓勵孩子進行戶外活動，而不是待在家裡看屏幕。', type: 'zh' },
+                { text: 'Além disso, caminhar em conjunto cria um espaço de diálogo natural, onde os temas surgem espontaneamente.', type: 'pt' },
+                { text: '此外，一起徒步創造了一個自然對話的空間，話題會自發出現。', type: 'zh' },
+                { text: 'As famílias que fazem atividades ao ar livre juntas tendem a ter relações mais fortes e saudáveis.', type: 'pt' },
+                { text: '一起進行戶外活動的家庭往往有更強、更健康的關係。', type: 'zh' }
+            ]
+        },
+        // 19. 祖母廚房
+        {
+            id: 'b1_19',
+            title: 'Ajudar a Avó na Cozinha',
+            titleZh: '祖母廚房',
+            icon: '👵',
+            sentences: [
+                { text: 'Nesta imagem, vemos um neto a ajudar a avó a cozinhar na cozinha da casa dela.', type: 'pt' },
+                { text: '在這張圖片中，我們看到孫子正在祖母的廚房裡幫她做飯。', type: 'zh' },
+                { text: 'A avó, de avental branco e cabelo grisalho, está a mexer um tacho grande com uma colher de pau.', type: 'pt' },
+                { text: '祖母穿著白色圍裙，頭髮花白，正在用木勺攪拌一個大鍋。', type: 'zh' },
+                { text: 'O neto, um jovem de cerca de vinte anos, está a cortar legumes numa tábua de madeira.', type: 'pt' },
+                { text: '孫子是一個大約二十歲的年輕人，正在木砧板上切蔬菜。', type: 'zh' },
+                { text: 'Há vários ingredientes espalhados pela bancada: tomates, cebolas, alho, azeite e ervas aromáticas.', type: 'pt' },
+                { text: '檯面上放著各種食材：番茄、洋蔥、大蒜、橄欖油和香草。', type: 'zh' },
+                { text: 'A cozinha é tradicional, com azulejos brancos e azuis, e uma janela com cortinas de renda.', type: 'pt' },
+                { text: '廚房是傳統風格，有白色和藍色的瓷磚，一扇掛著蕾絲窗簾的窗戶。', type: 'zh' },
+                { text: 'O cheiro a comida caseira parece preencher o ar.', type: 'pt' },
+                { text: '家常菜的味道彷彿瀰漫在空氣中。', type: 'zh' },
+                { text: 'É domingo e o neto vai almoçar com a avó, como fazem todas as semanas.', type: 'pt' },
+                { text: '今天是星期天，孫子要和祖母一起吃午飯，他們每週都是這樣。', type: 'zh' },
+                { text: 'Este é o ritual deles, um momento de transmissão de receitas e afeto entre gerações.', type: 'pt' },
+                { text: '這是他們的儀式，一個在代際之間傳承食譜和情感的時刻。', type: 'zh' },
+                { text: 'Os avós têm um papel importante na transmissão de receitas, tradições e valores familiares.', type: 'pt' },
+                { text: '祖父母在傳承家庭食譜、傳統和價值觀方面扮演重要角色。', type: 'zh' },
+                { text: 'Cozinhar juntos é uma forma de manter viva a memória cultural e afetiva.', type: 'pt' },
+                { text: '一起做飯是保持文化和情感記憶鮮活的方式。', type: 'zh' },
+                { text: 'Os jovens aprendem não só técnicas culinárias, mas também histórias de família e lições de vida.', type: 'pt' },
+                { text: '年輕人不僅學習烹飪技巧，還學到家庭故事和生活教訓。', type: 'zh' },
+                { text: 'Valorizemos estes momentos intergeracionais, que infelizmente estão a desaparecer na vida moderna.', type: 'pt' },
+                { text: '我們應該珍惜這些代際時刻，它們不幸在現代生活中正在消失。', type: 'zh' },
+                { text: 'Recomenda-se que as famílias reservem tempo para visitar os avós regularmente e cozinhar com eles.', type: 'pt' },
+                { text: '建議家庭定期抽出時間去看望祖父母並和他們一起做飯。', type: 'zh' },
+                { text: 'A cozinha é um lugar mágico onde o amor se transmite através dos sabores e dos cheiros.', type: 'pt' },
+                { text: '廚房是一個神奇的地方，愛通過味道和氣味傳遞。', type: 'zh' }
+            ]
+        },
+        // 20. 博物館排隊
+        {
+            id: 'b1_20',
+            title: 'Fila no Museu',
+            titleZh: '博物館排隊',
+            icon: '🏛️',
+            sentences: [
+                { text: 'Nesta imagem, vemos várias pessoas em fila à entrada de um museu, com guarda-chuvas porque está a chover.', type: 'pt' },
+                { text: '在這張圖片中，我們看到幾個人在博物館入口排隊，因為下雨了，他們帶著雨傘。', type: 'zh' },
+                { text: 'As pessoas olham para o edifício com curiosidade e expectativa.', type: 'pt' },
+                { text: '人們好奇而期待地看著建築。', type: 'zh' },
+                { text: 'Há um cartaz grande a anunciar uma exposição de arte moderna intitulada "Cores do Mundo".', type: 'pt' },
+                { text: '有一個大海報宣傳一個名為「世界的色彩」的現代藝術展。', type: 'zh' },
+                { text: 'Os visitantes são de diferentes idades: um casal de idosos, um grupo de jovens estudantes e uma família com duas crianças pequenas.', type: 'pt' },
+                { text: '參觀者年齡各異：一對老年夫婦、一群年輕學生和一個帶著兩個小孩的家庭。', type: 'zh' },
+                { text: 'As gotas de chuva escorrem pelos guarda-chuvas e o chão está molhado.', type: 'pt' },
+                { text: '雨滴從雨傘上滑落，地面濕漉漉的。', type: 'zh' },
+                { text: 'A fachada do museu é imponente, com colunas de pedra e uma porta de vidro.', type: 'pt' },
+                { text: '博物館外觀宏偉，有石柱和玻璃門。', type: 'zh' },
+                { text: 'Provavelmente é fim de semana, e o museu é uma opção cultural escolhida para um dia de chuva, alternativa ao ar livre.', type: 'pt' },
+                { text: '很可能是個週末，博物館是雨天選擇的文化選項，替代戶外活動。', type: 'zh' },
+                { text: 'As pessoas aproveitaram o mau tempo para fazer uma atividade educativa.', type: 'pt' },
+                { text: '人們利用壞天氣進行教育活動。', type: 'zh' },
+                { text: 'Visitar museus é uma atividade cultural enriquecedora, que estimula o pensamento crítico, a criatividade e o conhecimento histórico.', type: 'pt' },
+                { text: '參觀博物館是一種豐富的文化活動，能激發批判性思維、創造力和歷史知識。', type: 'zh' },
+                { text: 'Em dias de chuva, é uma excelente alternativa às atividades ao ar livre.', type: 'pt' },
+                { text: '在下雨天，它是戶外活動的絕佳替代。', type: 'zh' },
+                { text: 'As famílias deviam incluir museus no seu roteiro de lazer regular, para educar os filhos pela arte e pela história.', type: 'pt' },
+                { text: '家庭應該將博物館納入常規休閒計劃，通過藝術和歷史教育孩子。', type: 'zh' },
+                { text: 'Os museus também deviam promover preços acessíveis e atividades interativas para atrair mais jovens.', type: 'pt' },
+                { text: '博物館也應該提供親民價格和互動活動以吸引更多年輕人。', type: 'zh' },
+                { text: 'Além disso, visitar exposições em grupo é uma ótima oportunidade para discutir e partilhar opiniões, enriquecendo a experiência.', type: 'pt' },
+                { text: '此外，團體參觀展覽是一個討論和分享觀點的好機會，豐富體驗。', type: 'zh' },
+                { text: 'A arte tem o poder de nos unir e de nos fazer refletir sobre o mundo.', type: 'pt' },
+                { text: '藝術有力量將我們團結起來，讓我們反思世界。', type: 'zh' }
+            ]
         }
+    ];  // ← 注意：這個 `];` 是 ARTICLES_B1 陣列的結尾，必須保留！
     ];
 
     // 合併所有文章
     const ALL_ARTICLES = {
         a1: ARTICLES_A1, // 50篇
-        a2: ARTICLES_A2  // 20篇
+        b1: ARTICLES_B1  // 20篇
     };
 
     // ================================================================
@@ -2136,11 +2499,11 @@
     function renderCategoryTabs() {
         const btns = categoryTabs.querySelectorAll('button');
         btns.forEach(btn => {
-            btn.classList.remove('active-a1', 'active-a2');
+            btn.classList.remove('active-a1', 'active-b1');
             if (btn.dataset.category === 'a1' && currentCategory === 'a1') {
                 btn.classList.add('active-a1');
-            } else if (btn.dataset.category === 'a2' && currentCategory === 'a2') {
-                btn.classList.add('active-a2');
+            } else if (btn.dataset.category === 'b1' && currentCategory === 'b1') {
+                btn.classList.add('active-b1');
             }
         });
     }
@@ -2742,7 +3105,7 @@
         toggleMaskBtn.textContent = '🔒 遮擋葡語';
         toggleMaskBtn.classList.remove('unmask');
         renderArticle(0);
-        const catName = category === 'a1' ? 'A1-A2 看圖說話（50篇）' : 'A2-B1 看圖說話（10篇）';
+        const catName = category === 'a1' ? 'A1-A2 看圖說話（50篇）' : 'B1-B2 看圖說話（20篇）';
         showToast(`📂 已切換到 ${catName}`);
     });
 
