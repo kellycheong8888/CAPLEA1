@@ -2801,15 +2801,15 @@
                 const processor = audioContext.createScriptProcessor(4096, 1, 1);
                 pcmData = [];
 
-                                    processor.onaudioprocess = function(e) {
+                                     processor.onaudioprocess = function(e) {
                     if (!isRecording) return;
                     const inputData = e.inputBuffer.getChannelData(0);
                     const pcm = new Int16Array(inputData.length);
-                    // 音量增益係數 2.0 倍
-                    const gain = 2.0;
+                    // 音量增益係數 2.5 倍（讓錄音本身更大聲）
+                    const gain = 2.5;
                     for (let i = 0; i < inputData.length; i++) {
                         let s = Math.max(-1, Math.min(1, inputData[i]));
-                        s = s * gain;  // 放大音量
+                        s = s * gain;
                         s = Math.max(-1, Math.min(1, s));  // 防止爆音
                         pcm[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
                     }
@@ -3010,7 +3010,7 @@
         reader.readAsDataURL(blob);
     }
 
-            function playRecording(key) {
+               function playRecording(key) {
         const data = localStorage.getItem(key);
         if (!data) { 
             showToast('⚠️ 沒有錄音'); 
@@ -3022,10 +3022,9 @@
             const url = URL.createObjectURL(blob);
             const audio = new Audio(url);
             
-            // 🔊 音量放大 2 倍
-            audio.volume = 2.0;
+            // 🔊 音量最大值為 1.0（瀏覽器限制）
+            audio.volume = 1.0;
             
-            // 直接播放，不等待載入完成
             audio.play().catch(e => {
                 console.error('播放失敗:', e);
                 showToast('⚠️ 播放失敗，請重新錄音');
