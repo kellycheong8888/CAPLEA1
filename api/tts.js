@@ -1,223 +1,198 @@
-// api/tts.js — Azure TTS + OpenAI + STT 代理 (完整版)
+// ================================================================
+// Azure TTS / STT Proxy Server (Vercel)
+// ================================================================
+
+// ============================================
+// WebM 轉 WAV（使用 ffmpeg）
+// ============================================
+
+async function convertWebMToWav(webmBuffer) {
+    const { exec } = require('child_process');
+    const fs = require('fs');
+    const path = require('path');
+    const os = require('os');
+    
+    return new Promise((resolve, reject) => {
+        const tempDir = os.tmpdir();
+        const inputFile = path.join(tempDir, `input_${Date.now()}.webm`);
+        const outputFile = path.join(tempDir, `output_${Date.now()}.wav`);
+        
+        try {
+            fs.writeFileSync(inputFile, webmBuffer);
+        } catch (err) {
+            return reject(new Error('寫入輸入文件失敗: ' + err.message));
+        }
+        
+        const command = `ffmpeg -i "${inputFile}" -ar 16000 -ac 1 -f wav "${outputFile}" -y`;
+        
+        exec(command, (error, stdout, stderr) => {
+            // 清理輸入文件
+            try {
+                if (fs.existsSync(inputFile)) fs.unlinkSync(inputFile);
+            } catch (e) {}
+            
+            if (error) {
+                // 嘗試清理輸出文件（如果存在）
+                try {
+                    if (fs.existsSync(outputFile)) fs.unlinkSync(outputFile);
+                } catch (e) {}
+                return reject(new Error('ffmpeg 轉換失敗: ' + error.message));
+            }
+            
+            // 讀取輸出文件
+            try {
+                if (fs.existsSync(outputFile)) {
+                    const wavBuffer = fs.readFileSync(outputFile);
+                    fs.unlinkSync(outputFile);
+                    resolve(wavBuffer);
+                } else {
+                    reject(new Error('轉換失敗：未生成輸出文件'));
+                }
+            } catch (readError) {
+                reject(new Error('讀取輸出文件失敗: ' + readError.message));
+            }
+        });
+    });
+}
+
+// ================================================================
+// 主處理函數
+// ================================================================
+
 export default async function handler(req, res) {
-    // ============================================================
-    // 1. CORS 預檢請求 (OPTIONS)
-    // ============================================================
-    if (req.method === 'OPTIONS') {
-        res.setHeader('Access-Control-Allow-Origin', '*');
-        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-proxy-secret');
-        return res.status(200).end();
-    }
-
-    // ============================================================
-    // 2. 只允許 POST 請求
-    // ============================================================
+    // 只允許 POST 請求
     if (req.method !== 'POST') {
-        return res.status(405).json({ error: '只允許 POST 請求' });
+        return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    // ============================================================
-    // 3. 驗證密鑰 (保護 Azure 額度)
-    // ============================================================
+    // 驗證密鑰
     const secret = req.headers['x-proxy-secret'];
-    const expectedSecret = process.env.PROXY_SECRET;
-
-    if (!expectedSecret) {
-        console.error('⚠️ 伺服器未設定 PROXY_SECRET 環境變數');
-        return res.status(500).json({ error: '伺服器設定錯誤' });
+    if (secret !== 'mysecret2026') {
+        return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    if (secret !== expectedSecret) {
-        console.warn('⚠️ 未授權的請求: 密鑰不匹配');
-        return res.status(403).json({ error: '未授權' });
+    const { action, sttAudio, text, voice, rate } = req.body;
+
+    // 從環境變數獲取 Azure 金鑰
+    const AZURE_KEY = process.env.AZURE_SPEECH_KEY;
+    const AZURE_REGION = process.env.AZURE_SPEECH_REGION;
+
+    if (!AZURE_KEY || !AZURE_REGION) {
+        console.error('❌ Azure 憑證未設定');
+        return res.status(500).json({ error: 'Azure credentials not configured' });
     }
 
-    // ============================================================
-    // 4. 解析請求
-    // ============================================================
-    const { action, text, voice, rate, sttAudio, prompt } = req.body;
-
-    // 讀取環境變數
-    const subscriptionKey = process.env.AZURE_KEY;
-    const region = process.env.AZURE_REGION || 'southeastasia';
-    const sttKey = process.env.AZURE_STT_KEY || subscriptionKey;
-
-    // ============================================================
-    // 輔助函數：設定 CORS 標頭
-    // ============================================================
-    function setCorsHeaders() {
-        res.setHeader('Access-Control-Allow-Origin', '*');
-        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-proxy-secret');
-    }
-
-    // ============================================================
-    // 5. Azure TTS (語音合成)
-    // ============================================================
-    if (action === 'tts') {
-        if (!text) {
-            setCorsHeaders();
-            return res.status(400).json({ error: '請提供文字 (text)' });
-        }
-        if (!subscriptionKey) {
-            setCorsHeaders();
-            return res.status(500).json({ error: '伺服器未設定 Azure 金鑰' });
-        }
-
-        try {
-            // 獲取 Token
-            const tokenResponse = await fetch(
-                `https://${region}.api.cognitive.microsoft.com/sts/v1.0/issuetoken`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Ocp-Apim-Subscription-Key': subscriptionKey,
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'Content-Length': '0'
-                    }
-                }
-            );
-
-            if (!tokenResponse.ok) {
-                const errorText = await tokenResponse.text();
-                setCorsHeaders();
-                return res.status(tokenResponse.status).json({
-                    error: `Token 獲取失敗 (${tokenResponse.status}): ${errorText}`
-                });
-            }
-
-            const accessToken = await tokenResponse.text();
-
-            const ssml = `
-                <speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="pt-PT">
+    try {
+        // ============================================
+        // 語音合成 (TTS)
+        // ============================================
+        if (action === 'tts') {
+            const url = `https://${AZURE_REGION}.tts.speech.microsoft.com/cognitiveservices/v1`;
+            
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Ocp-Apim-Subscription-Key': AZURE_KEY,
+                    'Content-Type': 'application/ssml+xml',
+                    'X-Microsoft-OutputFormat': 'audio-16khz-128kbitrate-mono-mp3',
+                    'User-Agent': 'YourAppName'
+                },
+                body: `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="pt-PT">
                     <voice name="${voice || 'pt-PT-FernandaNeural'}">
-                        <prosody rate="${rate || 1.0}">
-                            ${text}
-                        </prosody>
+                        <prosody rate="${rate || 1.0}">${text}</prosody>
                     </voice>
-                </speak>
-            `;
-
-            const ttsResponse = await fetch(
-                `https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`,
-                        'Content-Type': 'application/ssml+xml',
-                        'X-Microsoft-OutputFormat': 'audio-16khz-128kbitrate-mono-mp3',
-                        'User-Agent': 'Vercel-Proxy'
-                    },
-                    body: ssml
-                }
-            );
-
-            if (!ttsResponse.ok) {
-                const errorText = await ttsResponse.text();
-                setCorsHeaders();
-                return res.status(ttsResponse.status).json({
-                    error: `TTS 調用失敗 (${ttsResponse.status}): ${errorText}`
-                });
-            }
-
-            const audioBuffer = await ttsResponse.arrayBuffer();
-            const base64Audio = Buffer.from(audioBuffer).toString('base64');
-
-            setCorsHeaders();
-            return res.status(200).json({
-                success: true,
-                audio: base64Audio,
-                voice: voice || 'pt-PT-FernandaNeural',
-                rate: rate || 1.0
+                </speak>`
             });
 
-        } catch (error) {
-            console.error('TTS 錯誤:', error);
-            setCorsHeaders();
-            return res.status(500).json({ error: `伺服器錯誤: ${error.message}` });
-        }
-    }
+            if (!response.ok) {
+                const error = await response.text();
+                return res.status(response.status).json({ error: `TTS failed: ${error}` });
+            }
 
-    // ============================================================
-    // 6. Azure Speech-to-Text (語音轉文字) — 用於發音評分
-    // ============================================================
-    if (action === 'stt') {
-        if (!sttKey) {
-            setCorsHeaders();
-            return res.status(500).json({ error: '伺服器未設定 STT 金鑰' });
+            const audioBuffer = await response.arrayBuffer();
+            const base64 = Buffer.from(audioBuffer).toString('base64');
+            return res.json({ success: true, audio: base64 });
         }
 
-        if (!sttAudio) {
-            setCorsHeaders();
-            return res.status(400).json({ error: '請提供音頻資料 (sttAudio)' });
-        }
+        // ============================================
+        // 語音轉文字 (STT) - 支援 WebM 自動轉換
+        // ============================================
+        if (action === 'stt') {
+            if (!sttAudio) {
+                return res.status(400).json({ error: 'Missing sttAudio' });
+            }
 
-        try {
+            console.log('📥 收到 STT 請求，音訊長度:', sttAudio.length);
+
             // 將 base64 轉為 Buffer
-            const audioBuffer = Buffer.from(sttAudio, 'base64');
+            let audioBuffer = Buffer.from(sttAudio, 'base64');
 
-            console.log('STT 請求: 音頻大小', audioBuffer.length, 'bytes');
+            // 檢查音訊格式
+            const header = audioBuffer.toString('hex', 0, 16);
+            const isWebM = header.includes('1a45dfa3'); // WebM 的魔術數字
+            const isWav = audioBuffer.toString('utf-8', 0, 4) === 'RIFF';
+            
+            console.log('📋 音訊格式檢測:', { isWav, isWebM, header: header.substring(0, 20) });
 
-            // 嘗試使用不同的端點格式
-            // 方法 1: 使用 conversation 端點
-            let sttResponse = await fetch(
-                `https://${region}.stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1?language=pt-PT&format=simple`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Ocp-Apim-Subscription-Key': sttKey,
-                        'Content-Type': 'audio/wav'
-                    },
-                    body: audioBuffer
+            // 如果是 WebM 且不是 WAV，嘗試轉換
+            if (!isWav && isWebM) {
+                console.log('🔄 檢測到 WebM 格式，嘗試轉換為 WAV...');
+                try {
+                    audioBuffer = await convertWebMToWav(audioBuffer);
+                    console.log('✅ WebM 轉換 WAV 成功，大小:', audioBuffer.length);
+                } catch (convertError) {
+                    console.error('❌ WebM 轉換失敗:', convertError.message);
+                    // 轉換失敗時，嘗試直接發送（Azure 可能支援某些 WebM 變體）
+                    console.log('⚠️ 將嘗試直接發送 WebM 格式');
                 }
-            );
-
-            // 如果失敗，嘗試使用 dictation 端點
-            if (!sttResponse.ok) {
-                console.log('STT: conversation 端點失敗，嘗試 dictation 端點');
-                sttResponse = await fetch(
-                    `https://${region}.stt.speech.microsoft.com/speech/recognition/dictation/cognitiveservices/v1?language=pt-PT&format=simple`,
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Ocp-Apim-Subscription-Key': sttKey,
-                            'Content-Type': 'audio/wav'
-                        },
-                        body: audioBuffer
-                    }
-                );
             }
 
-            if (!sttResponse.ok) {
-                const errorText = await sttResponse.text();
-                console.error('STT 請求失敗:', sttResponse.status, errorText);
-                setCorsHeaders();
-                return res.status(sttResponse.status).json({
-                    error: `STT 請求失敗 (${sttResponse.status}): ${errorText}`
-                });
-            }
+            // 檢查轉換後的格式
+            const isWavAfter = audioBuffer.toString('utf-8', 0, 4) === 'RIFF';
+            console.log('📋 發送前格式:', isWavAfter ? 'WAV' : '其他');
 
-            const sttData = await sttResponse.json();
-            console.log('STT 回應:', sttData);
+            const url = `https://${AZURE_REGION}.stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1?language=pt-PT&format=simple`;
 
-            setCorsHeaders();
-            return res.status(200).json({
-                success: true,
-                text: sttData.DisplayText || '',
-                recognitionStatus: sttData.RecognitionStatus || 'Success'
+            console.log('📤 發送請求到 Azure STT...');
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Ocp-Apim-Subscription-Key': AZURE_KEY,
+                    'Content-Type': isWavAfter ? 'audio/wav' : 'audio/webm',
+                    'Accept': 'application/json'
+                },
+                body: audioBuffer
             });
 
-        } catch (error) {
-            console.error('STT 錯誤:', error);
-            setCorsHeaders();
-            return res.status(500).json({ error: `伺服器錯誤: ${error.message}` });
-        }
-    }
+            console.log('📥 Azure STT 回應狀態:', response.status);
 
-    // ============================================================
-    // 7. 未知 action
-    // ============================================================
-    setCorsHeaders();
-    return res.status(400).json({ error: '未知的 action: ' + action });
+            if (!response.ok) {
+                const error = await response.text();
+                console.error('❌ Azure STT 錯誤:', error);
+                return res.status(response.status).json({ error: `STT failed: ${error}` });
+            }
+
+            const data = await response.json();
+            console.log('📥 Azure STT 結果:', data);
+
+            // 嘗試多種可能包含結果的欄位
+            const resultText = data.DisplayText || data.text || data.Recognized || '';
+            
+            return res.json({ success: true, text: resultText });
+        }
+
+        // ============================================
+        // Ping 測試
+        // ============================================
+        if (action === 'ping') {
+            return res.json({ success: true, message: 'pong', azureConfigured: !!AZURE_KEY });
+        }
+
+        return res.status(400).json({ error: 'Unknown action: ' + action });
+
+    } catch (error) {
+        console.error('❌ Proxy 錯誤:', error);
+        return res.status(500).json({ error: error.message });
+    }
 }
