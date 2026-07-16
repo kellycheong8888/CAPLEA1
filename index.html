@@ -2762,17 +2762,12 @@
     }
 
     // ================================================================
-    // 10. 錄音功能（使用 AudioWorkletNode - 現代、穩定）
+    // 10. 錄音功能（使用 MediaRecorder - 相容性最佳）
     // ================================================================
 
-    let audioContext = null;
     let mediaStream = null;
     let isRecording = false;
     let recordingStartTime = 0;
-    let pcmData = [];
-    let sampleRate = 16000;
-    let workletNode = null;
-    let workletLoaded = false;
 
     function toggleRecording(btn, key, index) {
         if (isRecording) {
@@ -2785,18 +2780,22 @@
             return;
         }
 
+        // 簡化音頻約束，讓瀏覽器自動選擇最佳設定
         const constraints = {
             audio: {
                 echoCancellation: true,
                 noiseSuppression: true,
-                autoGainControl: true,
-                sampleRate: 16000,
-                channelCount: 1
+                autoGainControl: true
             }
         };
 
         navigator.mediaDevices.getUserMedia(constraints)
             .then(stream => {
+                // 除錯：查看麥克風設定
+                const audioTrack = stream.getAudioTracks()[0];
+                const settings = audioTrack.getSettings();
+                console.log('🎤 麥克風設定:', settings);
+                
                 mediaStream = stream;
                 isRecording = true;
                 recordingStartTime = Date.now();
@@ -2804,7 +2803,7 @@
                 btn.classList.add('recording');
                 showToast('🎙 錄音中... 點擊停止');
 
-                startWorkletRecording(stream, btn, key);
+                startMediaRecorder(stream, btn, key);
             })
             .catch(err => {
                 console.error('麥克風錯誤:', err);
@@ -2818,119 +2817,78 @@
             });
     }
 
-    async function startWorkletRecording(stream, btn, key) {
+    function startMediaRecorder(stream, btn, key) {
         try {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            sampleRate = audioContext.sampleRate;
-            
-            // 加載 Worklet 處理器（如果尚未加載）
-            if (!workletLoaded) {
-                try {
-                    await audioContext.audioWorklet.addModule('processor.js');
-                    workletLoaded = true;
-                    console.log('✅ AudioWorklet 加載成功');
-                } catch (loadError) {
-                    console.warn('AudioWorklet 加載失敗，使用備用方案:', loadError);
-                    // 如果 Worklet 加載失敗，使用原有的 ScriptProcessorNode 作為備用
-                    startLegacyRecording(stream, btn, key);
-                    return;
+            // 嘗試多種 MIME type（優先順序：iOS 相容 > 標準）
+            const mimeTypes = [
+                'audio/mp4',
+                'audio/webm;codecs=opus',
+                'audio/webm',
+                'audio/ogg;codecs=opus'
+            ];
+
+            let selectedMimeType = null;
+            for (const type of mimeTypes) {
+                if (MediaRecorder.isTypeSupported(type)) {
+                    selectedMimeType = type;
+                    break;
                 }
             }
-            
-            const source = audioContext.createMediaStreamSource(stream);
-            workletNode = new AudioWorkletNode(audioContext, 'recorder-processor');
-            
-            pcmData = [];
 
-            workletNode.port.onmessage = (event) => {
-                if (!isRecording) return;
-                const inputData = event.data;
-                const pcm = new Int16Array(inputData.length);
-                for (let i = 0; i < inputData.length; i++) {
-                    const s = Math.max(-1, Math.min(1, inputData[i]));
-                    pcm[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+            if (!selectedMimeType) {
+                selectedMimeType = 'audio/webm';
+            }
+
+            console.log('📹 使用 MIME type:', selectedMimeType);
+
+            const recorder = new MediaRecorder(stream, { mimeType: selectedMimeType });
+            const chunks = [];
+
+            recorder.ondataavailable = function(e) {
+                if (e.data && e.data.size > 0) {
+                    chunks.push(e.data);
                 }
-                pcmData.push(pcm);
             };
 
-            source.connect(workletNode);
-            workletNode.connect(audioContext.destination);
-
-            btn._worklet = {
-                context: audioContext,
-                source: source,
-                node: workletNode,
-                stream: stream,
-                type: 'worklet'
-            };
-
-            btn._checkInterval = setInterval(() => {
-                if (!isRecording) return;
+            recorder.onstop = function() {
                 const duration = (Date.now() - recordingStartTime) / 1000;
-                if (duration > 30) {
-                    showToast('⏹️ 錄音超過 30 秒，自動停止');
-                    stopRecording(btn, key);
+                console.log('⏱️ 錄音時長:', duration.toFixed(1), '秒');
+                
+                if (duration < 1.5) {
+                    showToast('⚠️ 錄音太短（' + duration.toFixed(1) + '秒），請說完整句子');
+                    cleanupMediaRecorder(btn);
+                    return;
                 }
-            }, 5000);
+
+                const blob = new Blob(chunks, { type: selectedMimeType });
+                console.log('📦 錄音檔案大小:', (blob.size / 1024).toFixed(1), 'KB');
+                
+                if (blob.size < 2000) {
+                    showToast('⚠️ 錄音檔案太小，請重新錄製');
+                    cleanupMediaRecorder(btn);
+                    return;
+                }
+
+                saveRecording(blob, btn, key, selectedMimeType);
+            };
+
+            recorder.start(100);
+            btn._recorder = recorder;
 
         } catch (e) {
-            console.error('Worklet 錄音失敗，使用備用方案:', e);
-            startLegacyRecording(stream, btn, key);
+            console.error('MediaRecorder 啟動失敗:', e);
+            showToast('⚠️ 錄音啟動失敗: ' + e.message);
+            cleanupMediaRecorder(btn);
         }
     }
 
-    // 備用方案：使用 ScriptProcessorNode（相容舊瀏覽器）
-    function startLegacyRecording(stream, btn, key) {
-        try {
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                sampleRate = audioContext.sampleRate;
-            }
-            
-            const source = audioContext.createMediaStreamSource(stream);
-            const processor = audioContext.createScriptProcessor(4096, 1, 1);
-
-            source.connect(processor);
-            processor.connect(audioContext.destination);
-
-            pcmData = [];
-
-            processor.onaudioprocess = function(e) {
-                if (!isRecording) return;
-                const inputData = e.inputBuffer.getChannelData(0);
-                const pcm = new Int16Array(inputData.length);
-                for (let i = 0; i < inputData.length; i++) {
-                    const s = Math.max(-1, Math.min(1, inputData[i]));
-                    pcm[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
-                }
-                pcmData.push(pcm);
-            };
-
-            btn._worklet = {
-                context: audioContext,
-                source: source,
-                processor: processor,
-                stream: stream,
-                type: 'legacy'
-            };
-
-            btn._checkInterval = setInterval(() => {
-                if (!isRecording) return;
-                const duration = (Date.now() - recordingStartTime) / 1000;
-                if (duration > 30) {
-                    showToast('⏹️ 錄音超過 30 秒，自動停止');
-                    stopRecording(btn, key);
-                }
-            }, 5000);
-
-        } catch (e) {
-            console.error('備用錄音失敗:', e);
-            showToast('⚠️ 錄音初始化失敗，請重試');
-            if (mediaStream) {
-                mediaStream.getTracks().forEach(t => t.stop());
-                mediaStream = null;
-            }
-            isRecording = false;
+    function cleanupMediaRecorder(btn) {
+        if (mediaStream) {
+            mediaStream.getTracks().forEach(t => t.stop());
+            mediaStream = null;
+        }
+        isRecording = false;
+        if (btn) {
             btn.textContent = '🎙 錄音';
             btn.classList.remove('recording');
         }
@@ -2941,133 +2899,26 @@
         btn.textContent = '🎙 錄音';
         btn.classList.remove('recording');
 
-        const duration = (Date.now() - recordingStartTime) / 1000;
-        if (duration < 1.5) {
-            showToast('⚠️ 錄音太短（' + duration.toFixed(1) + '秒），請說完整句子');
-            cleanupRecording(btn);
-            return;
-        }
-
-        if (btn._worklet) {
+        // 停止 MediaRecorder
+        if (btn._recorder && btn._recorder.state === 'recording') {
             try {
-                const { context, source, node, processor, stream } = btn._worklet;
-                if (node) node.disconnect();
-                if (processor) processor.disconnect();
-                if (source) source.disconnect();
-                if (context && context.state !== 'closed') {
-                    context.close().catch(e => console.warn('關閉 AudioContext 錯誤:', e));
-                }
-                if (stream) {
-                    stream.getTracks().forEach(t => t.stop());
-                }
+                btn._recorder.stop();
             } catch (e) {
-                console.error('清理錯誤:', e);
+                console.warn('停止錄音錯誤:', e);
             }
-            btn._worklet = null;
+            btn._recorder = null;
         }
 
-        if (btn._checkInterval) {
-            clearInterval(btn._checkInterval);
-            btn._checkInterval = null;
-        }
-
-        if (!pcmData || pcmData.length === 0) {
-            showToast('⚠️ 沒有錄到聲音，請重新錄製');
-            cleanupRecording(btn);
-            return;
-        }
-
-        const totalSamples = pcmData.reduce((sum, arr) => sum + arr.length, 0);
-        const pcmBuffer = new Int16Array(totalSamples);
-        let offset = 0;
-        for (const arr of pcmData) {
-            pcmBuffer.set(arr, offset);
-            offset += arr.length;
-        }
-
-        // 音量檢測（門檻已降低）
-        let maxVolume = 0;
-        for (let i = 0; i < Math.min(pcmBuffer.length, 1000); i++) {
-            const abs = Math.abs(pcmBuffer[i]);
-            if (abs > maxVolume) maxVolume = abs;
-        }
-        
-        console.log('🎤 檢測到的最大音量:', maxVolume);
-        
-        // 門檻值降為 5，提高相容性
-        if (maxVolume < 5) {
-            showToast('⚠️ 錄音音量過低，請靠近麥克風說話（檢測值: ' + maxVolume + '）');
-            cleanupRecording(btn);
-            return;
-        }
-
-        const wavBlob = createWavBlob(pcmBuffer, sampleRate || 16000);
-        if (!wavBlob || wavBlob.size < 2000) {
-            showToast('⚠️ 錄音檔案太小，請重新錄製');
-            cleanupRecording(btn);
-            return;
-        }
-
-        saveWavRecording(wavBlob, btn, key);
-    }
-
-    function cleanupRecording(btn) {
+        // 清理媒體流
         if (mediaStream) {
             mediaStream.getTracks().forEach(t => t.stop());
             mediaStream = null;
         }
-        pcmData = [];
-        isRecording = false;
-        if (btn) {
-            btn.textContent = '🎙 錄音';
-            btn.classList.remove('recording');
-        }
+
+        showToast('⏹️ 錄音已停止');
     }
 
-    function createWavBlob(pcmData, sampleRate) {
-        try {
-            const numChannels = 1;
-            const bitsPerSample = 16;
-            const byteRate = sampleRate * numChannels * (bitsPerSample / 8);
-            const blockAlign = numChannels * (bitsPerSample / 8);
-            const dataSize = pcmData.length * (bitsPerSample / 8);
-
-            const buffer = new ArrayBuffer(44 + dataSize);
-            const view = new DataView(buffer);
-
-            writeString(view, 0, 'RIFF');
-            view.setUint32(4, 36 + dataSize, true);
-            writeString(view, 8, 'WAVE');
-            writeString(view, 12, 'fmt ');
-            view.setUint32(16, 16, true);
-            view.setUint16(20, 1, true);
-            view.setUint16(22, numChannels, true);
-            view.setUint32(24, sampleRate, true);
-            view.setUint32(28, byteRate, true);
-            view.setUint16(32, blockAlign, true);
-            view.setUint16(34, bitsPerSample, true);
-            writeString(view, 36, 'data');
-            view.setUint32(40, dataSize, true);
-
-            const offset = 44;
-            for (let i = 0; i < pcmData.length; i++) {
-                view.setInt16(offset + i * 2, pcmData[i], true);
-            }
-
-            return new Blob([buffer], { type: 'audio/wav' });
-        } catch (e) {
-            console.error('創建 WAV 失敗:', e);
-            return null;
-        }
-    }
-
-    function writeString(view, offset, string) {
-        for (let i = 0; i < string.length; i++) {
-            view.setUint8(offset + i, string.charCodeAt(i));
-        }
-    }
-
-    function saveWavRecording(blob, btn, key) {
+    function saveRecording(blob, btn, key, mimeType) {
         const reader = new FileReader();
         reader.onload = function(e) {
             try {
@@ -3078,8 +2929,9 @@
                 }
                 
                 localStorage.setItem(key, base64);
-                localStorage.setItem(key + '_type', 'audio/wav');
+                localStorage.setItem(key + '_type', mimeType);
                 
+                // 更新 UI
                 const playbackBtn = btn.parentElement.querySelector('.playback-btn');
                 if (playbackBtn) { playbackBtn.disabled = false; }
                 const scoreBtn = btn.parentElement.querySelector('.score-btn');
@@ -3098,7 +2950,6 @@
                     mediaStream.getTracks().forEach(t => t.stop());
                     mediaStream = null;
                 }
-                pcmData = [];
                 
                 showToast('✅ 錄音已儲存！');
             } catch (err) {
@@ -3119,7 +2970,7 @@
             return;
         }
         try {
-            let mimeType = localStorage.getItem(key + '_type') || 'audio/wav';
+            let mimeType = localStorage.getItem(key + '_type') || 'audio/webm';
             
             const blob = base64ToBlob(data, mimeType);
             if (blob.size === 0) {
@@ -3143,7 +2994,7 @@
             console.error('回放錯誤:', e);
             showToast('⚠️ 無法讀取錄音檔案');
             try {
-                const blob = base64ToBlob(data, 'audio/wav');
+                const blob = base64ToBlob(data, 'audio/webm');
                 downloadRecording(blob);
             } catch (err) {
                 showToast('⚠️ 錄音檔案已損毀，請重新錄製');
@@ -3155,7 +3006,7 @@
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `recording_${Date.now()}.wav`;
+        a.download = `recording_${Date.now()}.webm`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
