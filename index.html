@@ -3010,35 +3010,39 @@
         reader.readAsDataURL(blob);
     }
 
-        function playRecording(key) {
+            function playRecording(key) {
         const data = localStorage.getItem(key);
-        if (!data) { showToast('⚠️ 沒有錄音'); return; }
+        if (!data) { 
+            showToast('⚠️ 沒有錄音'); 
+            return; 
+        }
         try {
             const mimeType = localStorage.getItem(key + '_type') || 'audio/wav';
             const blob = base64ToBlob(data, mimeType);
             const url = URL.createObjectURL(blob);
             const audio = new Audio(url);
             
-            // 🔊 音量放大 3 倍，讓回放更清晰
-            audio.volume = 3.0;
+            // 🔊 音量放大 2 倍
+            audio.volume = 2.0;
             
-            // 確保音訊完全載入後再播放
-            audio.oncanplaythrough = () => {
-                audio.play();
-            };
+            // 直接播放，不等待載入完成
+            audio.play().catch(e => {
+                console.error('播放失敗:', e);
+                showToast('⚠️ 播放失敗，請重新錄音');
+            });
             
             audio.onended = () => { 
                 URL.revokeObjectURL(url); 
+                showToast('✅ 播放完成');
             };
             
             audio.onerror = (e) => {
-                console.error('音訊載入錯誤:', e);
-                showToast('⚠️ 播放失敗，請重新錄音');
+                console.error('音訊錯誤:', e);
+                showToast('⚠️ 播放失敗');
                 URL.revokeObjectURL(url);
             };
             
-            audio.load();
-            showToast('🔊 載入中...');
+            showToast('🔊 播放中...');
         } catch (e) {
             console.error('播放錯誤:', e);
             showToast('⚠️ 播放失敗');
