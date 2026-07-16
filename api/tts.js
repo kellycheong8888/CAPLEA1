@@ -26,20 +26,17 @@ async function convertWebMToWav(webmBuffer) {
         const command = `ffmpeg -i "${inputFile}" -ar 16000 -ac 1 -f wav "${outputFile}" -y`;
         
         exec(command, (error, stdout, stderr) => {
-            // 清理輸入文件
             try {
                 if (fs.existsSync(inputFile)) fs.unlinkSync(inputFile);
             } catch (e) {}
             
             if (error) {
-                // 嘗試清理輸出文件（如果存在）
                 try {
                     if (fs.existsSync(outputFile)) fs.unlinkSync(outputFile);
                 } catch (e) {}
                 return reject(new Error('ffmpeg 轉換失敗: ' + error.message));
             }
             
-            // 讀取輸出文件
             try {
                 if (fs.existsSync(outputFile)) {
                     const wavBuffer = fs.readFileSync(outputFile);
@@ -60,6 +57,18 @@ async function convertWebMToWav(webmBuffer) {
 // ================================================================
 
 export default async function handler(req, res) {
+    // ============================================
+    // CORS 設定（允許所有來源存取）
+    // ============================================
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-proxy-secret');
+
+    // 處理 OPTIONS 預檢請求
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+
     // 只允許 POST 請求
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
@@ -115,7 +124,7 @@ export default async function handler(req, res) {
         }
 
         // ============================================
-        // 語音轉文字 (STT) - 支援 WebM 自動轉換
+        // 語音轉文字 (STT)
         // ============================================
         if (action === 'stt') {
             if (!sttAudio) {
@@ -124,32 +133,25 @@ export default async function handler(req, res) {
 
             console.log('📥 收到 STT 請求，音訊長度:', sttAudio.length);
 
-            // 將 base64 轉為 Buffer
             let audioBuffer = Buffer.from(sttAudio, 'base64');
 
-            // 檢查音訊格式
             const header = audioBuffer.toString('hex', 0, 16);
-            const isWebM = header.includes('1a45dfa3'); // WebM 的魔術數字
+            const isWebM = header.includes('1a45dfa3');
             const isWav = audioBuffer.toString('utf-8', 0, 4) === 'RIFF';
             
-            console.log('📋 音訊格式檢測:', { isWav, isWebM, header: header.substring(0, 20) });
+            console.log('📋 音訊格式檢測:', { isWav, isWebM });
 
-            // 如果是 WebM 且不是 WAV，嘗試轉換
             if (!isWav && isWebM) {
-                console.log('🔄 檢測到 WebM 格式，嘗試轉換為 WAV...');
+                console.log('🔄 檢測到 WebM 格式，轉換為 WAV...');
                 try {
                     audioBuffer = await convertWebMToWav(audioBuffer);
-                    console.log('✅ WebM 轉換 WAV 成功，大小:', audioBuffer.length);
+                    console.log('✅ WebM 轉換成功');
                 } catch (convertError) {
                     console.error('❌ WebM 轉換失敗:', convertError.message);
-                    // 轉換失敗時，嘗試直接發送（Azure 可能支援某些 WebM 變體）
-                    console.log('⚠️ 將嘗試直接發送 WebM 格式');
                 }
             }
 
-            // 檢查轉換後的格式
             const isWavAfter = audioBuffer.toString('utf-8', 0, 4) === 'RIFF';
-            console.log('📋 發送前格式:', isWavAfter ? 'WAV' : '其他');
 
             const url = `https://${AZURE_REGION}.stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1?language=pt-PT&format=simple`;
 
@@ -176,7 +178,6 @@ export default async function handler(req, res) {
             const data = await response.json();
             console.log('📥 Azure STT 結果:', data);
 
-            // 嘗試多種可能包含結果的欄位
             const resultText = data.DisplayText || data.text || data.Recognized || '';
             
             return res.json({ success: true, text: resultText });
