@@ -2801,12 +2801,15 @@
                 const processor = audioContext.createScriptProcessor(4096, 1, 1);
                 pcmData = [];
 
-                processor.onaudioprocess = function(e) {
+                                processor.onaudioprocess = function(e) {
                     if (!isRecording) return;
                     const inputData = e.inputBuffer.getChannelData(0);
                     const pcm = new Int16Array(inputData.length);
+                    const gain = 1.5;  // 放大 1.5 倍
                     for (let i = 0; i < inputData.length; i++) {
-                        const s = Math.max(-1, Math.min(1, inputData[i]));
+                        let s = Math.max(-1, Math.min(1, inputData[i]));
+                        s = s * gain;
+                        s = Math.max(-1, Math.min(1, s));
                         pcm[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
                     }
                     pcmData.push(pcm);
