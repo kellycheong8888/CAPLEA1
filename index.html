@@ -2934,7 +2934,7 @@
             const abs = Math.abs(pcmBuffer[i]);
             if (abs > maxVolume) maxVolume = abs;
         }
-        if (maxVolume < 100) {
+        if (maxVolume < 20) {
             showToast('⚠️ 錄音音量過低，請靠近麥克風說話');
             cleanupRecording(btn);
             return;
