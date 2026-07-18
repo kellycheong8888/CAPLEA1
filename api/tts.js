@@ -26,7 +26,6 @@ module.exports = async (req, res) => {
     }
 
     try {
-        // 调用 processor.js 中的合成函数
         const audioData = await synthesizeSpeech(text, voice, rate, pitch);
         
         res.setHeader('Content-Type', 'audio/mpeg');
