@@ -1,13 +1,19 @@
 {
   "functions": {
     "api/tts.js": {
-      "runtime": "nodejs18.x"
+      "runtime": "@vercel/node@2"
     }
   },
-  "rewrites": [
+  "routes": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api/tts.js"
+      "src": "/api/tts",
+      "methods": ["GET", "POST", "OPTIONS"],
+      "headers": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization"
+      },
+      "dest": "/api/tts"
     }
   ]
 }
